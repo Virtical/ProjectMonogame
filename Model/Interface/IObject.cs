@@ -8,6 +8,8 @@ namespace TankMonogame.Model.Interface
 
         Vector2 Pos { get; }
 
+        float Rotation { get; set; }
+
         void Update();
     }
 }

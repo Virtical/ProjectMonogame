@@ -10,7 +10,10 @@ namespace TankMonogame.Model.Interface
         event EventHandler<GameplayEventArgs> Updated;
 
         void Update();
-        void ChangePlayerSpeed(Direction dir);
+        void ChangePlayerSpeed(int acceleration);
+        void ChangePlayerRotate(float rotationAcceleration);
+        void PlayerSlowdownSpeed(float slowdown);
+        void PlayerSlowdownRotate(float slowdown);
         void Initialize();
 
         public enum Direction : byte

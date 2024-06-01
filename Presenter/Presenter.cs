@@ -16,14 +16,32 @@ namespace TankMonogame.Presenter
 
             gameplayView.CycleFinished += ViewModelUpdate;
             gameplayView.PlayerMoved += ViewModelMovePlayer;
+            gameplayView.PlayerRotate += ViewModelRotatePlayer;
+            gameplayView.PlayerSlowdownSpeed += ViewModelSlowdownSpeedPlayer;
+            gameplayView.PlayerSlowdownRotate += ViewModelSlowdownRotatePlayer;
             gameplayModel.Updated += ModelViewUpdate;
 
             gameplayModel.Initialize();
         }
 
-        private void ViewModelMovePlayer(object sender, ControlsEventArgs e)
+        private void ViewModelMovePlayer(object sender, int acceleration)
         {
-            gameplayModel.ChangePlayerSpeed(e.Direction);
+            gameplayModel.ChangePlayerSpeed(acceleration);
+        }
+
+        private void ViewModelRotatePlayer(object sender, float rotationAcceleration)
+        {
+            gameplayModel.ChangePlayerRotate(rotationAcceleration);
+        }
+
+        private void ViewModelSlowdownSpeedPlayer(object sender, float slowdown)
+        {
+            gameplayModel.PlayerSlowdownSpeed(slowdown);
+        }
+
+        private void ViewModelSlowdownRotatePlayer(object sender, float slowdown)
+        {
+            gameplayModel.PlayerSlowdownRotate(slowdown);
         }
 
         private void ModelViewUpdate(object sender, GameplayEventArgs e)

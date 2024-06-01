@@ -14,7 +14,10 @@ namespace TankMonogame.View
         private SpriteBatch spriteBatch;
 
         public event EventHandler CycleFinished = delegate { };
-        public event EventHandler<ControlsEventArgs> PlayerMoved = delegate { };
+        public event EventHandler<int> PlayerMoved = delegate { };
+        public event EventHandler<float> PlayerRotate = delegate { };
+        public event EventHandler<float> PlayerSlowdownSpeed = delegate { };
+        public event EventHandler<float> PlayerSlowdownRotate = delegate { };
         private Dictionary<int, IObject> objects = new Dictionary<int, IObject>();
         private Dictionary<int, Texture2D> textures = new Dictionary<int, Texture2D>();
 
@@ -26,7 +29,7 @@ namespace TankMonogame.View
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = true;
+            IsMouseVisible = false;
             graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
 
@@ -42,12 +45,14 @@ namespace TankMonogame.View
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            textures.Add(1, Content.Load<Texture2D>("White_Placeholder"));
+            textures.Add(1, Content.Load<Texture2D>("Tank"));
 
             textureCell[ICell.TypeCell.Level1] = Content.Load<Texture2D>("FloorLevel1"); 
             textureCell[ICell.TypeCell.Level2] = Content.Load<Texture2D>("FloorLevel2");
             textureCell[ICell.TypeCell.Level3] = Content.Load<Texture2D>("FloorLevel3");
             textureCell[ICell.TypeCell.Level4] = Content.Load<Texture2D>("FloorLevel4");
+            textureCell[ICell.TypeCell.Level5] = Content.Load<Texture2D>("FloorLevel5");
+            textureCell[ICell.TypeCell.Level6] = Content.Load<Texture2D>("FloorLevel6");
 
         }
 
@@ -59,54 +64,46 @@ namespace TankMonogame.View
         protected override void Update(GameTime gameTime)
         {
             var keys = Keyboard.GetState().GetPressedKeys();
-            if (keys.Length > 0)
+
+            bool isMoving = false;
+            bool isRotating = false;
+
+            foreach (var k in keys)
             {
-                var k = keys[0];
                 switch (k)
                 {
                     case Keys.W:
-                        {
-                            PlayerMoved.Invoke(this, new ControlsEventArgs
-                              {
-                                  Direction = IGameplayModel.Direction.forward
-                              }
-                            );
-                            break;
-                        }
+                        PlayerMoved.Invoke(this, 1);
+                        isMoving = true;
+                        break;
                     case Keys.S:
-                        {
-                            PlayerMoved.Invoke(this, new ControlsEventArgs
-                                {
-                                    Direction = IGameplayModel.Direction.backward
-                                }
-                              );
-                            break;
-                        }
+                        PlayerMoved.Invoke(this, -1);
+                        isMoving = true;
+                        break;
                     case Keys.D:
-                        {
-                            PlayerMoved.Invoke(this, new ControlsEventArgs
-                                {
-                                    Direction = IGameplayModel.Direction.right
-                                }
-                              );
-                            break;
-                        }
+                        PlayerRotate.Invoke(this, 0.005f);
+                        isRotating = true;
+                        break;
                     case Keys.A:
-                        {
-                            PlayerMoved.Invoke(this, new ControlsEventArgs
-                                {
-                                    Direction = IGameplayModel.Direction.left
-                                }
-                              );
-                            break;
-                        }
+                        PlayerRotate.Invoke(this, -0.005f);
+                        isRotating = true;
+                        break;
                     case Keys.Escape:
-                        {
-                            Exit();
-                            break;
-                        }
+                        Exit();
+                        break;
                 }
             }
+
+            if (!isMoving)
+            {
+                PlayerSlowdownSpeed.Invoke(this, 0.3f);
+            }
+
+            if (!isRotating)
+            {
+                PlayerSlowdownRotate.Invoke(this, 0.003f);
+            }
+
             base.Update(gameTime);
             CycleFinished.Invoke(this, new EventArgs());
         }
@@ -124,7 +121,7 @@ namespace TankMonogame.View
 
             foreach (var o in objects.Values)
             {
-                spriteBatch.Draw(textures[o.ImageId], o.Pos, Color.White);
+                spriteBatch.Draw(textures[o.ImageId], o.Pos, null, Color.White, o.Rotation, new Vector2(textures[o.ImageId].Width / 2, textures[o.ImageId].Height / 2), 1f, SpriteEffects.None, 0f);
             }
             spriteBatch.End();
         }

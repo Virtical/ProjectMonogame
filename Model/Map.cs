@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,41 +16,42 @@ namespace TankMonogame.Model
         public readonly int Height;
         Random r = new Random();
 
-        Snake snake = new Snake(new Point(64, 768), new Point(2432, 768));
+        HashSet<Point> p = Snake.SnakeByDots(new List<Point>() { new Point(128, 320), new Point(2240, 320), new Point(2240, 1216), new Point(128, 1216) });
 
         public List<Cell> Cells = new List<Cell>();
-        private List<Point> points = new List<Point>();
+        private HashSet<Point> points = new HashSet<Point>();
+
 
         public Map(int width, int height, int cellSize) 
         {
             Width = width;
             Height = height;
 
-            Point newPoint = new Point(64, 768);
-            while (newPoint != new Point(2432, 768))
+            points.Add(new Point(128, 320));
+
+            foreach (Point i in p)
             {
-                newPoint = snake.GetNextPoint();
-                points.Add(newPoint);
+                points.Add(i);
+            }
+
+            foreach (Point point in points)
+            {
+                if (point != new Point(128, 320) && point != new Point(2240, 320) && point != new Point(2240, 1216) && point != new Point(128, 1216))
+                {
+                    Cells.Add(new Cell(cellSize, point, (ICell.TypeCell)r.Next(3, 5)));
+                }
+                else
+                {
+                    Cells.Add(new Cell(cellSize, point, ICell.TypeCell.Level6));
+                }
             }
 
             for (int y = 0; y < height; y += cellSize)
             {
                 for (int x = 0; x < width; x += cellSize)
                 {
-                    if ((y == (height / cellSize)/2* cellSize) && (x == 64 || x == 2432))
-                    {
-                        Cells.Add(new Cell(cellSize, new Point(x, y), ICell.TypeCell.Level4));
-                    }
-
-                    else if (points.Contains(new Point(x, y)))
-                    {
-                        Cells.Add(new Cell(cellSize, new Point(x, y), ICell.TypeCell.Level4));
-                    }
-
-                    else
-                    {
-                        Cells.Add(new Cell(cellSize, new Point(x, y), (ICell.TypeCell)r.Next(0, 3)));
-                    }
+                    if (!points.Contains(new Point(x, y)))
+                    Cells.Add(new Cell(cellSize, new Point(x, y), (ICell.TypeCell)r.Next(0, 3)));
                 }
             }
         }

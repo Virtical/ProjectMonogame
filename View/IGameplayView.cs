@@ -10,9 +10,11 @@ namespace TankMonogame.View
 {
     public interface IGameplayView
     {
-        //Включается в конце каждого цикла, чтобы обновить модель
         event EventHandler CycleFinished;
-        event EventHandler<ControlsEventArgs> PlayerMoved;
+        event EventHandler<int> PlayerMoved;
+        event EventHandler<float> PlayerRotate;
+        event EventHandler<float> PlayerSlowdownSpeed;
+        event EventHandler<float> PlayerSlowdownRotate;
 
         void LoadGameCycleParameters(Dictionary<int, IObject> Objects);
         void Run();
