@@ -13,7 +13,9 @@ namespace TankMonogame.Model.Interface
             Level3,
             Level4,
             Level5,
-            Level6
+            Level6,
+            Level7,
+            Level8
         }
 
         TypeCell Type { get; set; }

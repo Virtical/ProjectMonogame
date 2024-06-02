@@ -8,7 +8,7 @@ using TankMonogame.Model.Interface;
 
 namespace TankMonogame.Model
 {
-    internal class Tank : IObject
+    public class Tank : IObject
     {
         public int ImageId { get; set; }
         public Vector2 Pos { get; set; }
@@ -17,8 +17,10 @@ namespace TankMonogame.Model
         public float Rotation { get; set; }
         public float RotationSpeed { get; set; }
         public float MaxRotationSpeed { get; set; }
+        public Vector2 Anchor { get; set; }
+        public BarrelAndTower Turret { get; set; }
 
-        public void Update()
+    public void Update()
         {
             Rotation += RotationSpeed;
             Pos += Speed * new Vector2((float)Math.Cos(Rotation), (float)Math.Sin(Rotation));

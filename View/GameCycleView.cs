@@ -29,10 +29,9 @@ namespace TankMonogame.View
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = false;
+            IsMouseVisible = true;
             graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-
             map = new Map(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height, 64);
         }
 
@@ -46,6 +45,7 @@ namespace TankMonogame.View
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             textures.Add(1, Content.Load<Texture2D>("Tank"));
+            textures.Add(2, Content.Load<Texture2D>("BarrelAndTower"));
 
             textureCell[ICell.TypeCell.Level1] = Content.Load<Texture2D>("FloorLevel1"); 
             textureCell[ICell.TypeCell.Level2] = Content.Load<Texture2D>("FloorLevel2");
@@ -53,6 +53,8 @@ namespace TankMonogame.View
             textureCell[ICell.TypeCell.Level4] = Content.Load<Texture2D>("FloorLevel4");
             textureCell[ICell.TypeCell.Level5] = Content.Load<Texture2D>("FloorLevel5");
             textureCell[ICell.TypeCell.Level6] = Content.Load<Texture2D>("FloorLevel6");
+            textureCell[ICell.TypeCell.Level7] = Content.Load<Texture2D>("FloorLevel7");
+            textureCell[ICell.TypeCell.Level8] = Content.Load<Texture2D>("FloorLevel8");
 
         }
 
@@ -121,7 +123,7 @@ namespace TankMonogame.View
 
             foreach (var o in objects.Values)
             {
-                spriteBatch.Draw(textures[o.ImageId], o.Pos, null, Color.White, o.Rotation, new Vector2(textures[o.ImageId].Width / 2, textures[o.ImageId].Height / 2), 1f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(textures[o.ImageId], o.Pos, null, Color.White, o.Rotation, o.Anchor, 1f, SpriteEffects.None, 0f);
             }
             spriteBatch.End();
         }
