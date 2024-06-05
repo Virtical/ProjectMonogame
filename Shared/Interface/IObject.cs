@@ -1,36 +1,21 @@
 ﻿using Microsoft.Xna.Framework;
-using System;
 using System.Linq;
-using TankMonogame.Model.Interface;
-using TankMonogame.Model.QuadTree;
+using System;
+using TankMonogame.Model.QuadTreeAlgorithm;
 
-namespace TankMonogame.Model
+namespace TankMonogame.Shared.Interface
 {
-    public class Tank : IObject, IGetBox<Tank>, IEquals<Tank>
+    public interface IObject : IGetBox<IObject>, IEquals<IObject>
     {
-        public int ImageId { get; set; }
-        public Vector2 Pos { get; set; }
+        int ImageId { get; set; }
+        Vector2 Pos { get; set; }
+        Vector2 Anchor { get; }
+        float Angle { get; set; }
         public float Speed { get; set; }
         public int MaxSpeed { get; set; }
-        public float Angle { get; set; }
-        public float RotationSpeed { get; set; }
-        public float MaxRotationSpeed { get; set; }
-        public Vector2 Anchor { get; set; }
-        public BarrelAndTower Turret { get; set; }
-        public Vector2 LeftTop { get; set; }
-        public Vector2 RightBottom { get; set; }
-        public Vector2 VelocityProjection { get; set; }
-        public Vector2 Velocity { get; set; }
-
-        public void Update()
-        {
-            Angle += RotationSpeed;
-            Velocity = Speed * new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
-            Pos += Velocity - VelocityProjection;
-            VelocityProjection = new Vector2(0, 0);
-        }
-
-        public static BoxQT GetBox(IObject item)
+        Vector2 LeftTop { get; set; }
+        Vector2 RightBottom { get; set; }
+        new public static BoxQT GetBox(IObject item)
         {
             var newXValues = new double[4];
             var newYValues = new double[4];
@@ -50,9 +35,10 @@ namespace TankMonogame.Model
             return new BoxQT((float)newXValues.Min(), (float)newYValues.Min(), (float)(newXValues.Max() - newXValues.Min()), (float)(newYValues.Max() - newYValues.Min()));
         }
 
-        public static bool Equals(IObject x, IObject y)
+        new public static bool Equals(IObject x, IObject y)
         {
             return x.ImageId.Equals(y.ImageId);
         }
+        void Update();
     }
 }

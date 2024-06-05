@@ -1,6 +1,8 @@
 ﻿using System;
-using TankMonogame.Model.Interface;
-using TankMonogame.View;
+using TankMonogame.Shared.Interface;
+using TankMonogame.Shared.Enums;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework;
 
 namespace TankMonogame.Presenter
 {
@@ -15,38 +17,58 @@ namespace TankMonogame.Presenter
             this.gameplayModel = gameplayModel;
 
             gameplayView.CycleFinished += ViewModelUpdate;
-            gameplayView.PlayerMoved += ViewModelMovePlayer;
-            gameplayView.PlayerRotate += ViewModelRotatePlayer;
-            gameplayView.PlayerSlowdownSpeed += ViewModelSlowdownSpeedPlayer;
-            gameplayView.PlayerSlowdownRotate += ViewModelSlowdownRotatePlayer;
+            gameplayView.TankMoved += ViewModelMoveTank;
+            gameplayView.TankRotate += ViewModelRotateTank;
+            gameplayView.PlayerSlowdownSpeed += ViewModelSlowdownSpeedTank;
+            gameplayView.PlayerSlowdownRotate += ViewModelSlowdownRotateTank;
+            gameplayView.TankShoot += ViewModelTankShoot;
+            gameplayView.StopTankShoot += ViewModelStopTankShoot;
+            gameplayView.TurretRotate += ViewModelRotateTurret;
             gameplayModel.Updated += ModelViewUpdate;
 
             gameplayModel.Initialize();
         }
 
-        private void ViewModelMovePlayer(object sender, int acceleration)
+        private void ViewModelRotateTurret(object sender, MouseState e)
         {
-            gameplayModel.ChangePlayerSpeed(acceleration);
+            gameplayModel.ChangeTurretRotate(e);
         }
 
-        private void ViewModelRotatePlayer(object sender, float rotationAcceleration)
+        private void ViewModelTankShoot(object sender, GameTime e)
         {
-            gameplayModel.ChangePlayerRotate(rotationAcceleration);
+            gameplayModel.TankShoot(e);
         }
 
-        private void ViewModelSlowdownSpeedPlayer(object sender, float slowdown)
+        private void ViewModelStopTankShoot(object sender, EventArgs e)
         {
-            gameplayModel.PlayerSlowdownSpeed(slowdown);
+            gameplayModel.StopTankShoot();
         }
 
-        private void ViewModelSlowdownRotatePlayer(object sender, float slowdown)
+        private void ViewModelMoveTank(object sender, DirectionOfMovement dir)
         {
-            gameplayModel.PlayerSlowdownRotate(slowdown);
+            gameplayModel.ChangeTankSpeed(dir);
+        }
+
+        private void ViewModelRotateTank(object sender, DirectionOfRotation dir)
+        {
+            gameplayModel.ChangeTankRotate(dir);
+        }
+
+        private void ViewModelSlowdownSpeedTank(object sender, EventArgs e)
+        {
+            gameplayModel.TankSlowdownSpeed();
+        }
+
+        private void ViewModelSlowdownRotateTank(object sender, EventArgs e)
+        {
+            gameplayModel.TankSlowdownRotate();
         }
 
         private void ModelViewUpdate(object sender, GameplayEventArgs e)
         {
-            gameplayView.LoadGameCycleParameters(e.Objects);
+            gameplayModel.CheckTankBoundary();
+            gameplayModel.CheckBulletsBoundary();
+            gameplayView.LoadGameCycleParameters(e.Map, e.TankHull, e.BarrelAndTower, e.Bullets);
         }
 
         private void ViewModelUpdate(object sender, EventArgs e)

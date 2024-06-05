@@ -2,11 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.ExceptionServices;
-using System.Text;
-using System.Threading.Tasks;
-using TankMonogame.Model.Interface;
+using TankMonogame.Model.QuadTreeAlgorithm;
+using TankMonogame.Shared.Enums;
+using TankMonogame.Model.RandomWalkAlgorithm;
 
 namespace TankMonogame.Model
 {
@@ -17,6 +15,7 @@ namespace TankMonogame.Model
         Random r = new Random();
         public HashSet<Cell> Cells = new HashSet<Cell>();
         List<Point> borders = new List<Point>();
+        public QuadTree<Cell> statictree = new QuadTree<Cell>(new BoxQT(0, 0, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height), Cell.GetBox, Cell.Equals);
 
 
         public Map(int width, int height, int cellSize) 
@@ -26,7 +25,8 @@ namespace TankMonogame.Model
 
             List<Point> controlPoints = new List<Point>() { new Point(128, 320), new Point(2240, 320), new Point(2240, 1216), new Point(128, 1216) };
 
-            HashSet<Point> trail = Snake.SnakeByDots(controlPoints);
+
+            HashSet<Point> trail = RandomWalk.SnakeByDots(controlPoints);
 
             foreach (Point point in trail)
             {
@@ -38,7 +38,10 @@ namespace TankMonogame.Model
 
                         if (!trail.Contains(new Point(point.X + x*64, point.Y + y*64)))
                         {
-                            Cells.Add(new Cell(cellSize, new Point(point.X + x * 64, point.Y + y * 64), ICell.TypeCell.Level8));
+                            var borderPoint = new Point(point.X + x * 64, point.Y + y * 64);
+                            var borderCell = new Cell(cellSize, borderPoint, TypeCell.Level8);
+                            Cells.Add(borderCell);
+                            statictree.Add(borderCell);
                             borders.Add(new Point(point.X + x * 64, point.Y + y * 64));
                         }
                     }
@@ -46,11 +49,11 @@ namespace TankMonogame.Model
 
                 if (point == controlPoints[0] || point == controlPoints[1] || point == controlPoints[2] || point == controlPoints[3])
                 {
-                    Cells.Add(new Cell(cellSize, point, ICell.TypeCell.Level6));
+                    Cells.Add(new Cell(cellSize, point, TypeCell.Level6));
                 }
                 else
                 {
-                    Cells.Add(new Cell(cellSize, point, (ICell.TypeCell)r.Next(3, 5)));
+                    Cells.Add(new Cell(cellSize, point, (TypeCell)r.Next(3, 5)));
                 }
             }
 
@@ -60,7 +63,7 @@ namespace TankMonogame.Model
                 {
                     if (!trail.Contains(new Point(x, y)) && !borders.Contains(new Point(x, y)))
                     {
-                        Cells.Add(new Cell(cellSize, new Point(x, y), (ICell.TypeCell)r.Next(0, 3)));
+                        Cells.Add(new Cell(cellSize, new Point(x, y), (TypeCell)r.Next(0, 3)));
                     }
                 }
             }

@@ -4,10 +4,8 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using TankMonogame.Model;
-using TankMonogame.Model.Interface;
-using TankMonogame.Model.QuadTree.TankMonogame.Model.QuadTree;
-using TankMonogame.Model.QuadTree;
-
+using TankMonogame.Shared.Interface;
+using TankMonogame.Shared.Enums;
 namespace TankMonogame.View
 {
     public class GameCycleView : Game, IGameplayView
@@ -16,16 +14,24 @@ namespace TankMonogame.View
         private SpriteBatch spriteBatch;
 
         public event EventHandler CycleFinished = delegate { };
-        public event EventHandler<int> PlayerMoved = delegate { };
-        public event EventHandler<float> PlayerRotate = delegate { };
-        public event EventHandler<float> PlayerSlowdownSpeed = delegate { };
-        public event EventHandler<float> PlayerSlowdownRotate = delegate { };
-        private Dictionary<int, IObject> objects = new Dictionary<int, IObject>();
+        public event EventHandler<DirectionOfMovement> TankMoved = delegate { };
+        public event EventHandler<DirectionOfRotation> TankRotate = delegate { };
+        public event EventHandler<EventArgs> PlayerSlowdownSpeed = delegate { };
+        public event EventHandler<EventArgs> PlayerSlowdownRotate = delegate { };
+        public event EventHandler<GameTime> TankShoot = delegate { };
+        public event EventHandler<EventArgs> StopTankShoot = delegate { };
+        public event EventHandler<MouseState> TurretRotate = delegate { };
+
         private Dictionary<int, Texture2D> textures = new Dictionary<int, Texture2D>();
+
         Texture2D pointTexture;
 
         private Map map;
-        private Dictionary<ICell.TypeCell, Texture2D> textureCell = new Dictionary<ICell.TypeCell, Texture2D>();
+        private TankHull tankHull;
+        private BarrelAndTower barrelAndTower;
+        private List<Bullet> bullets;
+
+        private Dictionary<TypeCell, Texture2D> textureCell = new Dictionary<TypeCell, Texture2D>();
 
 
         public GameCycleView()
@@ -34,7 +40,6 @@ namespace TankMonogame.View
             Content.RootDirectory = "Content";
             graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            map = new Map(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height, 64);
         }
 
         protected override void Initialize()
@@ -49,28 +54,45 @@ namespace TankMonogame.View
             spriteBatch = new SpriteBatch(GraphicsDevice);
             textures.Add(1, Content.Load<Texture2D>("Tank"));
             textures.Add(2, Content.Load<Texture2D>("BarrelAndTower"));
+            textures.Add(3, Content.Load<Texture2D>("Bullet"));
 
-            textureCell[ICell.TypeCell.Level1] = Content.Load<Texture2D>("FloorLevel1"); 
-            textureCell[ICell.TypeCell.Level2] = Content.Load<Texture2D>("FloorLevel2");
-            textureCell[ICell.TypeCell.Level3] = Content.Load<Texture2D>("FloorLevel3");
-            textureCell[ICell.TypeCell.Level4] = Content.Load<Texture2D>("FloorLevel4");
-            textureCell[ICell.TypeCell.Level5] = Content.Load<Texture2D>("FloorLevel5");
-            textureCell[ICell.TypeCell.Level6] = Content.Load<Texture2D>("FloorLevel6");
-            textureCell[ICell.TypeCell.Level7] = Content.Load<Texture2D>("FloorLevel7");
-            textureCell[ICell.TypeCell.Level8] = Content.Load<Texture2D>("FloorLevel8");
+            textureCell[TypeCell.Level1] = Content.Load<Texture2D>("FloorLevel1");
+            textureCell[TypeCell.Level2] = Content.Load<Texture2D>("FloorLevel2");
+            textureCell[TypeCell.Level3] = Content.Load<Texture2D>("FloorLevel3");
+            textureCell[TypeCell.Level4] = Content.Load<Texture2D>("FloorLevel4");
+            textureCell[TypeCell.Level5] = Content.Load<Texture2D>("FloorLevel5");
+            textureCell[TypeCell.Level6] = Content.Load<Texture2D>("FloorLevel6");
+            textureCell[TypeCell.Level7] = Content.Load<Texture2D>("FloorLevel7");
+            textureCell[TypeCell.Level8] = Content.Load<Texture2D>("FloorLevel8");
 
             pointTexture = new Texture2D(GraphicsDevice, 1, 1);
             pointTexture.SetData(new Color[] { Color.Red });
-
         }
 
-        public void LoadGameCycleParameters(Dictionary<int, IObject> Objects)
+        public void LoadGameCycleParameters(Map map, TankHull tankHull, BarrelAndTower barrelAndTower, List<Bullet> bullets)
         {
-            objects = Objects;
+            this.map = map;
+            this.tankHull = tankHull;
+            this.barrelAndTower = barrelAndTower;
+            this.bullets = bullets;
         }
 
         protected override void Update(GameTime gameTime)
         {
+            var mouseState = Mouse.GetState();
+            TurretRotate.Invoke(this, mouseState);
+
+            switch (mouseState.LeftButton)
+            {
+                case ButtonState.Pressed:
+                    TankShoot.Invoke(this, gameTime);
+                    break;
+                case ButtonState.Released:
+                    StopTankShoot.Invoke(this, EventArgs.Empty);
+                    break;
+            }
+
+
             var keys = Keyboard.GetState().GetPressedKeys();
 
             bool isMoving = false;
@@ -81,19 +103,19 @@ namespace TankMonogame.View
                 switch (k)
                 {
                     case Keys.W:
-                        PlayerMoved.Invoke(this, 1);
+                        TankMoved.Invoke(this, DirectionOfMovement.Forward);
                         isMoving = true;
                         break;
                     case Keys.S:
-                        PlayerMoved.Invoke(this, -1);
+                        TankMoved.Invoke(this, DirectionOfMovement.Backward);
                         isMoving = true;
                         break;
                     case Keys.D:
-                        PlayerRotate.Invoke(this, 0.005f);
+                        TankRotate.Invoke(this, DirectionOfRotation.Right);
                         isRotating = true;
                         break;
                     case Keys.A:
-                        PlayerRotate.Invoke(this, -0.005f);
+                        TankRotate.Invoke(this, DirectionOfRotation.Left);
                         isRotating = true;
                         break;
                     case Keys.Escape:
@@ -104,69 +126,43 @@ namespace TankMonogame.View
 
             if (!isMoving)
             {
-                PlayerSlowdownSpeed.Invoke(this, 0.3f);
+                PlayerSlowdownSpeed.Invoke(this, EventArgs.Empty);
             }
 
             if (!isRotating)
             {
-                PlayerSlowdownRotate.Invoke(this, 0.003f);
+                PlayerSlowdownRotate.Invoke(this, EventArgs.Empty);
             }
 
             base.Update(gameTime);
+
             CycleFinished.Invoke(this, new EventArgs());
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
+
             spriteBatch.Begin();
 
-            var statictree = new Quadtree<Cell>(new BoxQT(0, 0, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height), Cell.GetBox, Cell.Equals);
-
-            var cnt = 0;
             foreach (Cell cell in map.Cells)
             {
-                if (cell.Type == ICell.TypeCell.Level8)
-                {
-                    statictree.Add(cell);
-                    cnt++;
-                }
                 spriteBatch.Draw(textureCell[cell.Type], cell.LTPoint.ToVector2(), Color.White);
             }
 
-            Tank t = null;
-            BarrelAndTower b = null;
-            foreach (var o in objects.Values)
+            spriteBatch.Draw(textures[tankHull.ImageId], tankHull.Pos, null, Color.White, tankHull.Angle, tankHull.Anchor, 1f, SpriteEffects.None, 0f);
+
+            var boxT = IObject.GetBox(tankHull);
+            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetLeft() - 1, (int)boxT.GetTop() - 1, 3, 3), Color.Red);
+            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetRight() - 1, (int)boxT.GetTop() - 1, 3, 3), Color.Red);
+            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetRight() - 1, (int)boxT.GetBottom() - 1, 3, 3), Color.Red);
+            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetLeft() - 1, (int)boxT.GetBottom() - 1, 3, 3), Color.Red);
+
+            spriteBatch.Draw(textures[barrelAndTower.ImageId], barrelAndTower.Pos, null, Color.White, barrelAndTower.Angle, barrelAndTower.Anchor, 1f, SpriteEffects.None, 0f);
+
+            foreach (var bullet in bullets)
             {
-                spriteBatch.Draw(textures[o.ImageId], o.Pos, null, Color.White, o.Angle, o.Anchor, 1f, SpriteEffects.None, 0f);
-                if (o.GetType() == typeof(Tank)) 
-                {
-                    t = (Tank)o;
-                }
-
-                if (o.GetType() == typeof(BarrelAndTower))
-                {
-                    b = (BarrelAndTower)o;
-                }
-            }
-
-            var boxT = Tank.GetBox(t);
-            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetLeft() - 2, (int)boxT.GetTop() - 2, 3, 3), Color.Red);
-            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetRight() - 2, (int)boxT.GetTop() - 2, 3, 3), Color.Red);
-            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetRight() - 2, (int)boxT.GetBottom() - 2, 3, 3), Color.Red);
-            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetLeft() - 2, (int)boxT.GetBottom() - 2, 3, 3), Color.Red);
-
-            var staticNodesHit = statictree.Query(boxT);
-            foreach (var staticNode in staticNodesHit)
-            {
-
-                var normal = Cell.GetBox(staticNode).DetectCollision(boxT);
-
-                float dotProduct = Vector2.Dot(t.Velocity, normal.N.ToVector2());
-                t.Pos += normal.N.ToVector2();
-                t.VelocityProjection = dotProduct * normal.N.ToVector2();
-
-                spriteBatch.Draw(pointTexture, new Rectangle(staticNode.LTPoint.X, staticNode.LTPoint.Y, staticNode.RBPoint.X - staticNode.LTPoint.X, staticNode.RBPoint.Y - staticNode.LTPoint.Y), new Color(0, 0, 0, 100));
+                spriteBatch.Draw(textures[bullet.ImageId], bullet.Pos, null, Color.White, bullet.Angle, bullet.Anchor, 1f, SpriteEffects.None, 0f);
             }
 
             spriteBatch.End();

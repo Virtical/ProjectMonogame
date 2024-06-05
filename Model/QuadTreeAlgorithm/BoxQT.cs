@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace TankMonogame.Model.QuadTree
+namespace TankMonogame.Model.QuadTreeAlgorithm
 {
     public class BoxQT
     {
@@ -81,7 +77,7 @@ namespace TankMonogame.Model.QuadTree
                      top >= box.GetBottom() || GetBottom() <= box.top);
         }
 
-        public CollisionResult DetectCollision(BoxQT other)
+        public CollisionResultQT DetectCollision(BoxQT other)
         {
             if (!Intersects(other))
             {
@@ -110,7 +106,7 @@ namespace TankMonogame.Model.QuadTree
             }
 
             // Возвращаем результат столкновения
-            return new CollisionResult(Math.Min(penetrationX, penetrationY), normal);
+            return new CollisionResultQT(Math.Min(penetrationX, penetrationY), normal);
         }
     }
 }

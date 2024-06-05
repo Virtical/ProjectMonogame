@@ -1,13 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
-namespace TankMonogame.Model
+namespace TankMonogame.Model.RandomWalkAlgorithm
 {
-    public class Snake
+    public class RandomWalk
     {
         Point start;
         Point current;
@@ -28,7 +26,7 @@ namespace TankMonogame.Model
             Left, Right, Straight
         }
 
-        public Snake(Point start, Point end, Point straightDirection)
+        public RandomWalk(Point start, Point end, Point straightDirection)
         {
             random = new Random();
 
@@ -41,7 +39,7 @@ namespace TankMonogame.Model
             pointDirection[Direction.Straight] = straightDirection;
 
             this.start = start;
-            this.current = start;
+            current = start;
             this.end = end;
         }
 
@@ -59,7 +57,7 @@ namespace TankMonogame.Model
                     }
                 }
 
-                var snake = new Snake(points[i], points[i + 1], NormalizePoint(points[i + 1] - points[i]));
+                var snake = new RandomWalk(points[i], points[i + 1], NormalizePoint(points[i + 1] - points[i]));
 
                 var curPoint = points[i];
                 while (curPoint != points[i + 1])
@@ -106,7 +104,7 @@ namespace TankMonogame.Model
 
         static IEnumerable<Point> addNeighborsX(Point point)
         {
-            for (int i = -2; i <= 2 ; i++)
+            for (int i = -2; i <= 2; i++)
             {
                 if (i == 0) continue;
                 yield return new Point(point.X + i * 64, point.Y);

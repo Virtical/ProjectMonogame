@@ -1,19 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using TankMonogame.Model.Interface;
-using TankMonogame.Model.QuadTree;
+using TankMonogame.Shared.Enums;
+using TankMonogame.Model.QuadTreeAlgorithm;
+using TankMonogame.Shared.Interface;
 
 namespace TankMonogame.Model
 {
     public class Cell : ICell, IGetBox<Cell>, IEquals<Cell>
     {
-        public Cell(int size, Point position, ICell.TypeCell cellType) 
+        public Cell(int size, Point position, TypeCell cellType) 
         {
             CellSize = size;
             Type = cellType;
@@ -25,7 +20,7 @@ namespace TankMonogame.Model
         }
 
         public readonly int CellSize;
-        public ICell.TypeCell Type { get; set; }
+        public TypeCell Type { get; set; }
 
         public readonly Point LTPoint;
         public readonly Point RTPoint;

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 
-namespace TankMonogame.Model.QuadTree
+namespace TankMonogame.Model.QuadTreeAlgorithm
 {
     public class VectorQT
     {
