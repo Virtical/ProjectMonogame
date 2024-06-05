@@ -22,22 +22,28 @@ namespace TankMonogame.Model
             tank.Pos = new Vector2(200, 350);
             tank.ImageId = 1;
             tank.Speed = 0;
-            tank.Rotation = 0;
+            tank.Angle = 0;
             tank.RotationSpeed = 0;
             tank.MaxSpeed = 3;
             tank.MaxRotationSpeed = 0.015f;
             tank.Anchor = new Vector2(62, 41);
+            tank.LeftTop = new Vector2(-62, -41);
+            tank.RightBottom = new Vector2(62, 41);
+            tank.VelocityProjection = new Vector2(0, 0);
+            tank.Velocity = new Vector2(0, 0);
             Objects.Add(1, tank);
 
             BarrelAndTower turret = new BarrelAndTower();
-            turret.Pos = tank.Pos - new Vector2(15, 15) * new Vector2((float)Math.Cos(tank.Rotation), (float)Math.Sin(tank.Rotation));
+            turret.Pos = tank.Pos - new Vector2(15, 15) * new Vector2((float)Math.Cos(tank.Angle), (float)Math.Sin(tank.Angle));
             turret.ImageId = 2;
             turret.Speed = 0;
-            turret.Rotation = 0;
+            turret.Angle = 0;
             turret.RotationSpeed = 0;
             turret.MaxSpeed = 3;
             turret.Anchor = new Vector2(27, 23);
             turret.tank = tank;
+            turret.LeftTop = new Vector2(-27, -23);
+            turret.RightBottom = new Vector2(85, 23);
             Objects.Add(2, turret);
 
             PlayerId = 1;

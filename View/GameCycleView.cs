@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using TankMonogame.Model;
 using TankMonogame.Model.Interface;
+using TankMonogame.Model.QuadTree.TankMonogame.Model.QuadTree;
+using TankMonogame.Model.QuadTree;
 
 namespace TankMonogame.View
 {
@@ -20,6 +22,7 @@ namespace TankMonogame.View
         public event EventHandler<float> PlayerSlowdownRotate = delegate { };
         private Dictionary<int, IObject> objects = new Dictionary<int, IObject>();
         private Dictionary<int, Texture2D> textures = new Dictionary<int, Texture2D>();
+        Texture2D pointTexture;
 
         private Map map;
         private Dictionary<ICell.TypeCell, Texture2D> textureCell = new Dictionary<ICell.TypeCell, Texture2D>();
@@ -29,7 +32,6 @@ namespace TankMonogame.View
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            IsMouseVisible = true;
             graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             map = new Map(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height, 64);
@@ -38,6 +40,7 @@ namespace TankMonogame.View
         protected override void Initialize()
         {
             Window.Position = new Point(0, 0);
+            IsMouseVisible = true;
             base.Initialize();
         }
 
@@ -55,6 +58,9 @@ namespace TankMonogame.View
             textureCell[ICell.TypeCell.Level6] = Content.Load<Texture2D>("FloorLevel6");
             textureCell[ICell.TypeCell.Level7] = Content.Load<Texture2D>("FloorLevel7");
             textureCell[ICell.TypeCell.Level8] = Content.Load<Texture2D>("FloorLevel8");
+
+            pointTexture = new Texture2D(GraphicsDevice, 1, 1);
+            pointTexture.SetData(new Color[] { Color.Red });
 
         }
 
@@ -113,18 +119,56 @@ namespace TankMonogame.View
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
-            base.Draw(gameTime);
             spriteBatch.Begin();
 
+            var statictree = new Quadtree<Cell>(new BoxQT(0, 0, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height), Cell.GetBox, Cell.Equals);
+
+            var cnt = 0;
             foreach (Cell cell in map.Cells)
             {
+                if (cell.Type == ICell.TypeCell.Level8)
+                {
+                    statictree.Add(cell);
+                    cnt++;
+                }
                 spriteBatch.Draw(textureCell[cell.Type], cell.LTPoint.ToVector2(), Color.White);
             }
 
+            Tank t = null;
+            BarrelAndTower b = null;
             foreach (var o in objects.Values)
             {
-                spriteBatch.Draw(textures[o.ImageId], o.Pos, null, Color.White, o.Rotation, o.Anchor, 1f, SpriteEffects.None, 0f);
+                spriteBatch.Draw(textures[o.ImageId], o.Pos, null, Color.White, o.Angle, o.Anchor, 1f, SpriteEffects.None, 0f);
+                if (o.GetType() == typeof(Tank)) 
+                {
+                    t = (Tank)o;
+                }
+
+                if (o.GetType() == typeof(BarrelAndTower))
+                {
+                    b = (BarrelAndTower)o;
+                }
             }
+
+            var boxT = Tank.GetBox(t);
+            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetLeft() - 2, (int)boxT.GetTop() - 2, 3, 3), Color.Red);
+            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetRight() - 2, (int)boxT.GetTop() - 2, 3, 3), Color.Red);
+            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetRight() - 2, (int)boxT.GetBottom() - 2, 3, 3), Color.Red);
+            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetLeft() - 2, (int)boxT.GetBottom() - 2, 3, 3), Color.Red);
+
+            var staticNodesHit = statictree.Query(boxT);
+            foreach (var staticNode in staticNodesHit)
+            {
+
+                var normal = Cell.GetBox(staticNode).DetectCollision(boxT);
+
+                float dotProduct = Vector2.Dot(t.Velocity, normal.N.ToVector2());
+                t.Pos += normal.N.ToVector2();
+                t.VelocityProjection = dotProduct * normal.N.ToVector2();
+
+                spriteBatch.Draw(pointTexture, new Rectangle(staticNode.LTPoint.X, staticNode.LTPoint.Y, staticNode.RBPoint.X - staticNode.LTPoint.X, staticNode.RBPoint.Y - staticNode.LTPoint.Y), new Color(0, 0, 0, 100));
+            }
+
             spriteBatch.End();
         }
     }

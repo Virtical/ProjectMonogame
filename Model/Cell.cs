@@ -7,10 +7,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using TankMonogame.Model.Interface;
+using TankMonogame.Model.QuadTree;
 
 namespace TankMonogame.Model
 {
-    public class Cell : ICell
+    public class Cell : ICell, IGetBox<Cell>, IEquals<Cell>
     {
         public Cell(int size, Point position, ICell.TypeCell cellType) 
         {
@@ -34,6 +35,16 @@ namespace TankMonogame.Model
         public bool IsInside(Point p)
         {
             throw new NotImplementedException();
+        }
+
+        public static BoxQT GetBox(Cell item)
+        {
+            return new BoxQT(item.LTPoint.X, item.LTPoint.Y, item.RBPoint.X- item.LTPoint.X, item.RBPoint.Y - item.LTPoint.Y);
+        }
+
+        public static bool Equals(Cell x, Cell y)
+        {
+            return x.LTPoint.Equals(y.LTPoint);
         }
     }
 }
