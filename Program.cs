@@ -9,7 +9,7 @@ public static class Program
     [STAThread]
     static void Main()
     {      
-        GameplayPresenter g = new GameplayPresenter(new GameCycleView(), new GameCycleModel());
+        GameplayPresenter g = new GameplayPresenter(new GameplayView(), new GameplayModel());
         g.LaunchGame();
     }
 }

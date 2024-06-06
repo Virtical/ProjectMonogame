@@ -6,11 +6,9 @@ using System.Collections.Generic;
 using TankMonogame.Model;
 using TankMonogame.Shared.Interface;
 using TankMonogame.Shared.Enums;
-using System.Data.Common;
-using System.Threading.Tasks;
 namespace TankMonogame.View
 {
-    public class GameCycleView : Game, IGameplayView
+    public class GameplayView : Game, IGameplayView
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
@@ -24,20 +22,17 @@ namespace TankMonogame.View
         public event EventHandler<EventArgs> StopTankShoot = delegate { };
         public event EventHandler<MouseState> TurretRotate = delegate { };
 
-        private Dictionary<int, Texture2D> textures = new Dictionary<int, Texture2D>();
-
-        Texture2D pointTexture;
-
         private Map map;
         private TankHull tankHull;
-        private BarrelAndTower barrelAndTower;
+        private Turret barrelAndTower;
         private List<Bullet> bullets;
         private List<Explosion> explosions;
 
         private Dictionary<TypeCell, Texture2D> textureCell = new Dictionary<TypeCell, Texture2D>();
+        private Dictionary<int, Texture2D> textures = new Dictionary<int, Texture2D>();
 
 
-        public GameCycleView()
+        public GameplayView()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -59,6 +54,7 @@ namespace TankMonogame.View
             textures.Add(2, Content.Load<Texture2D>("BarrelAndTower"));
             textures.Add(3, Content.Load<Texture2D>("Bullet"));
             textures.Add(4, Content.Load<Texture2D>("Explosion"));
+            textures.Add(5, Content.Load<Texture2D>("Barrels"));
 
             textureCell[TypeCell.Level1] = Content.Load<Texture2D>("FloorLevel1");
             textureCell[TypeCell.Level2] = Content.Load<Texture2D>("FloorLevel2");
@@ -68,16 +64,13 @@ namespace TankMonogame.View
             textureCell[TypeCell.Level6] = Content.Load<Texture2D>("FloorLevel6");
             textureCell[TypeCell.Level7] = Content.Load<Texture2D>("FloorLevel7");
             textureCell[TypeCell.Level8] = Content.Load<Texture2D>("FloorLevel8");
-
-            pointTexture = new Texture2D(GraphicsDevice, 1, 1);
-            pointTexture.SetData(new Color[] { Color.Red });
         }
 
-        public void LoadGameCycleParameters(Map map, TankHull tankHull, BarrelAndTower barrelAndTower, List<Bullet> bullets, List<Explosion> explosions)
+        public void LoadGameCycleParameters(Map map, TankHull tankHull, Turret turret, List<Bullet> bullets, List<Explosion> explosions)
         {
             this.map = map;
             this.tankHull = tankHull;
-            this.barrelAndTower = barrelAndTower;
+            this.barrelAndTower = turret;
             this.bullets = bullets;
             this.explosions = explosions;
         }
@@ -139,9 +132,9 @@ namespace TankMonogame.View
                 PlayerSlowdownRotate.Invoke(this, EventArgs.Empty);
             }
 
-            base.Update(gameTime);
-
             CycleFinished.Invoke(this, new EventArgs());
+
+            base.Update(gameTime);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -150,29 +143,15 @@ namespace TankMonogame.View
 
             spriteBatch.Begin();
 
-            //Отрисовка карты
-            foreach (Cell cell in map.Cells)
+            spriteBatch.Draw(map, textureCell);
+            spriteBatch.Draw(tankHull, textures);
+            spriteBatch.Draw(barrelAndTower, textures);
+            spriteBatch.Draw(bullets, textures);
+            spriteBatch.Draw(explosions, textures);
+
+            foreach(var burrel in map.burrels) 
             {
-                spriteBatch.Draw(textureCell[cell.Type], cell.LTPoint.ToVector2(), Color.White);
-            }
-
-            //Отрисовка корпуса танка
-            spriteBatch.Draw(textures[tankHull.ImageId], tankHull.Pos, null, Color.White, tankHull.Angle, tankHull.Anchor, 1f, SpriteEffects.None, 0f);
-
-            //Отрисовака башни танка
-            spriteBatch.Draw(textures[barrelAndTower.ImageId], barrelAndTower.Pos, null, Color.White, barrelAndTower.Angle, barrelAndTower.Anchor, 1f, SpriteEffects.None, 0f);
-
-            //Отрисовка пуль
-            foreach (var bullet in bullets)
-            {
-                spriteBatch.Draw(textures[bullet.ImageId], bullet.Pos, null, Color.White, bullet.Angle, bullet.Anchor, 1f, SpriteEffects.None, 0f);
-            }
-
-            foreach (var explosion in explosions)
-            {
-                Rectangle sourceRectangle = new Rectangle(0, 64 * explosion.AnimationFrame, 120, 64);
-
-                spriteBatch.Draw(textures[explosion.ImageId], explosion.Pos, sourceRectangle, Color.White, explosion.Angle, explosion.Anchor, 1.0f, SpriteEffects.None, 1);
+                spriteBatch.Draw(textures[burrel.ImageId], burrel.LTPoint.ToVector2(), Color.White);
             }
 
             spriteBatch.End();

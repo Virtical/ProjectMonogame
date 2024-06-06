@@ -23,7 +23,6 @@ namespace TankMonogame.Model
 
         public void Update()
         {
-            
         }
     }
 }

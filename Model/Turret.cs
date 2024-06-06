@@ -6,7 +6,7 @@ using TankMonogame.Shared.Interface;
 
 namespace TankMonogame.Model
 {
-    public class BarrelAndTower : IObject
+    public class Turret : IObject
     {
         public int ImageId { get; set; }
         public Vector2 Pos { get; set; }

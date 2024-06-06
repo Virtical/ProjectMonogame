@@ -9,13 +9,13 @@ using Microsoft.Xna.Framework.Input;
 
 namespace TankMonogame.Model
 {
-    public class GameCycleModel : IGameplayModel
+    public class GameplayModel : IGameplayModel
     {
 	    public event EventHandler<GameplayEventArgs> Updated = delegate { };
  
         private Map map;
         private TankHull tankHull;
-        private BarrelAndTower barrelAndTower;
+        private Turret turret;
         private List<Bullet> bullets;
         private List<Explosion> explosions;
         private double timeLastShoot = 0;
@@ -28,7 +28,7 @@ namespace TankMonogame.Model
         }
         public void Initialize()
         {
-            map = new Map(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height, 64);
+            map = new Map(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
 
             tankHull = new TankHull
             {
@@ -48,7 +48,7 @@ namespace TankMonogame.Model
                 RAcceleration = 0.005f
             };
 
-            barrelAndTower = new BarrelAndTower
+            turret = new Turret
             {
                 Pos = tankHull.Pos - new Vector2(15, 15) * new Vector2((float)Math.Cos(tankHull.Angle), (float)Math.Sin(tankHull.Angle)),
                 ImageId = 2,
@@ -69,7 +69,7 @@ namespace TankMonogame.Model
         public void Update()
         {
   	        tankHull.Update();
-            barrelAndTower.Update();
+            turret.Update();
 
             foreach (Bullet bullet in bullets)
             {
@@ -79,7 +79,7 @@ namespace TankMonogame.Model
             Updated.Invoke(this, new GameplayEventArgs 
             { 
                 TankHull = tankHull,
-                BarrelAndTower = barrelAndTower,
+                turret = turret,
                 Map = map,
                 Bullets = bullets,
                 Explosions = explosions
@@ -89,19 +89,19 @@ namespace TankMonogame.Model
         public void ChangeTurretRotate(MouseState mouseState)
         {
             Vector2 mousePosition = new Vector2(mouseState.X, mouseState.Y);
-            Vector2 direction = mousePosition - barrelAndTower.Pos;
+            Vector2 direction = mousePosition - turret.Pos;
             float turretRotation = (float)Math.Atan2(direction.Y, direction.X);
 
-            float difference = turretRotation - barrelAndTower.Angle;
+            float difference = turretRotation - turret.Angle;
             difference = (float)((difference + Math.PI) % (2 * Math.PI) - Math.PI);
 
             if (Math.Abs(difference) < 0.03)
             {
-                barrelAndTower.RotationSpeed = 0f;
+                turret.RotationSpeed = 0f;
             }
             else
             {
-                barrelAndTower.RotationSpeed = Math.Sign(difference) * 0.03f;
+                turret.RotationSpeed = Math.Sign(difference) * 0.03f;
             }
         }
 
@@ -157,10 +157,22 @@ namespace TankMonogame.Model
 
         public void CheckTankBoundary()
         {
-            var staticNodesHit = map.statictree.Query(IObject.GetBox(tankHull));
+            var staticNodesHit = map.StaticTreeBorders.Query(IObject.GetBox(tankHull));
             foreach (var staticNode in staticNodesHit)
             {
                 var normal = Cell.GetBox(staticNode).DetectCollision(IObject.GetBox(tankHull));
+                if (normal != null)
+                {
+                    float dotProduct = Vector2.Dot(tankHull.Velocity, normal.N.ToVector2());
+                    tankHull.Pos += normal.N.ToVector2();
+                    tankHull.VelocityProjection = dotProduct * normal.N.ToVector2();
+                }
+            }
+
+            var staticBurrelsHit = map.StaticTreeBurrels.Query(IObject.GetBox(tankHull));
+            foreach (var staticNode in staticBurrelsHit)
+            {
+                var normal = Burrel.GetBox(staticNode).DetectCollision(IObject.GetBox(tankHull));
                 if (normal != null)
                 {
                     float dotProduct = Vector2.Dot(tankHull.Velocity, normal.N.ToVector2());
@@ -172,33 +184,74 @@ namespace TankMonogame.Model
 
         public void CheckBulletsBoundary()
         {
-            for (var i = 0;  i < bullets.Count; i++)
+            var bulletsToRemove = new List<Bullet>();
+            var burrelsToRemove = new List<Burrel>();
+
+            for (var i = 0; i < bullets.Count; i++)
             {
-                var staticNodesHit = map.statictree.Query(IObject.GetBox(bullets[i]));
-                foreach (var staticNode in staticNodesHit)
+                var bullet = bullets[i];
+                var staticCellsHit = map.StaticTreeBorders.Query(IObject.GetBox(bullet));
+
+                bool isHit = false;
+
+                foreach (var staticNode in staticCellsHit)
                 {
                     var newExplosion = new Explosion
                     {
-                        Pos = bullets[i].Pos,
+                        Pos = bullet.Pos + new Vector2((float)Math.Cos(bullet.Angle) * 17, (float)Math.Sin(bullet.Angle) * 17),
                         ImageId = 4,
                         Speed = 0,
-                        Angle = bullets[i].Angle,
+                        Angle = bullet.Angle,
+                        MaxSpeed = 0,
+                        Anchor = new Vector2(120, 32),
+                        LeftTop = new Vector2(-120, -32),
+                        RightBottom = new Vector2(0, 32)
+                    };
+
+                    explosions.Add(newExplosion);
+                    bulletsToRemove.Add(bullet);
+                    isHit = true;
+                    break;
+                }
+
+                if (isHit) continue;
+
+                var staticBurrelsHit = map.StaticTreeBurrels.Query(IObject.GetBox(bullet));
+                foreach (var staticNode in staticBurrelsHit)
+                {
+                    var newExplosion = new Explosion
+                    {
+                        Pos = bullet.Pos + new Vector2((float)Math.Cos(bullet.Angle) * 17, (float)Math.Sin(bullet.Angle) * 17),
+                        ImageId = 4,
+                        Speed = 0,
+                        Angle = bullet.Angle,
                         MaxSpeed = 0,
                         Anchor = new Vector2(120, 32),
                         LeftTop = new Vector2(-120, -32),
                         RightBottom = new Vector2(0, 32)
                     };
                     explosions.Add(newExplosion);
-                    bullets.RemoveAt(i);
+                    burrelsToRemove.Add(staticNode);
+                    bulletsToRemove.Add(bullet);
                     break;
                 }
+            }
+
+            foreach (var burrel in burrelsToRemove)
+            {
+                map.burrels.Remove(burrel);
+                map.StaticTreeBurrels.Remove(burrel);
+            }
+            foreach (var bullet in bulletsToRemove)
+            {
+                bullets.Remove(bullet);
             }
         }
         public void UpdateExplosion()
         {
             for (int i = 0; i < explosions.Count; i++)
             {
-                if (explosions[i].AnimationFrame == 3)
+                if (explosions[i].AnimationFrame == 11)
                 {
                     explosions.RemoveAt(i);
                 }
@@ -215,10 +268,10 @@ namespace TankMonogame.Model
             {
                 var newBullet = new Bullet
                 {
-                    Pos = new Vector2((int)(barrelAndTower.Pos.X + barrelAndTower.RightBottom.X * Math.Cos(barrelAndTower.Angle)), (int)(barrelAndTower.Pos.Y + barrelAndTower.RightBottom.X * Math.Sin(barrelAndTower.Angle))),
+                    Pos = new Vector2((int)(turret.Pos.X + turret.RightBottom.X * Math.Cos(turret.Angle)), (int)(turret.Pos.Y + turret.RightBottom.X * Math.Sin(turret.Angle))),
                     ImageId = 3,
                     Speed = 15f,
-                    Angle = barrelAndTower.Angle,
+                    Angle = turret.Angle,
                     MaxSpeed = 15,
                     Anchor = new Vector2(0, 4),
                     LeftTop = new Vector2(0, -4),
@@ -227,7 +280,7 @@ namespace TankMonogame.Model
 
                 bullets.Add(newBullet);
                 timeLastShoot = time.TotalGameTime.TotalSeconds;
-                barrelAndTower.AnimationFrame = 0;
+                turret.AnimationFrame = 0;
             }
 
             IsPossibleShoot = false;

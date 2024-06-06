@@ -18,7 +18,7 @@ namespace TankMonogame.Shared.Interface
         event EventHandler<GameTime> TankShoot;
         event EventHandler<EventArgs> StopTankShoot;
 
-        void LoadGameCycleParameters(Map map, TankHull tankHull, BarrelAndTower barrelAndTower, List<Bullet> bullets, List<Explosion> explosions);
+        void LoadGameCycleParameters(Map map, TankHull tankHull, Turret barrelAndTower, List<Bullet> bullets, List<Explosion> explosions);
         void Run();
     }
 

@@ -69,7 +69,7 @@ namespace TankMonogame.Presenter
             gameplayModel.CheckTankBoundary();
             gameplayModel.CheckBulletsBoundary();
             gameplayModel.UpdateExplosion();
-            gameplayView.LoadGameCycleParameters(e.Map, e.TankHull, e.BarrelAndTower, e.Bullets, e.Explosions);
+            gameplayView.LoadGameCycleParameters(e.Map, e.TankHull, e.turret, e.Bullets, e.Explosions);
         }
 
         private void ViewModelUpdate(object sender, EventArgs e)
