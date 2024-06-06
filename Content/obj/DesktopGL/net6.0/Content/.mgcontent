@@ -4,17 +4,17 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/TankMonogame/Content/BarrelAndTower.png</File>
-    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/TankMonogame/Content/Bullet.png</File>
-    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/TankMonogame/Content/FloorLevel1.png</File>
-    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/TankMonogame/Content/FloorLevel2.png</File>
-    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/TankMonogame/Content/FloorLevel3.png</File>
-    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/TankMonogame/Content/FloorLevel4.png</File>
-    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/TankMonogame/Content/FloorLevel5.png</File>
-    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/TankMonogame/Content/FloorLevel6.png</File>
-    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/TankMonogame/Content/FloorLevel7.png</File>
-    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/TankMonogame/Content/FloorLevel8.png</File>
-    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/TankMonogame/Content/Tank.png</File>
+    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/BarrelAndTower.png</File>
+    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/Bullet.png</File>
+    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel1.png</File>
+    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel2.png</File>
+    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel3.png</File>
+    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel4.png</File>
+    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel5.png</File>
+    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel6.png</File>
+    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel7.png</File>
+    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel8.png</File>
+    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/Tank.png</File>
   </SourceFiles>
   <DestFiles>
     <File xsi:nil="true" />

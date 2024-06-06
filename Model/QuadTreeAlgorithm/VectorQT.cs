@@ -12,12 +12,21 @@ namespace TankMonogame.Model.QuadTreeAlgorithm
         public float X;
         public float Y;
 
-        public VectorQT(float x = 0, float y = 0)
+        public VectorQT()
+        {
+            X = 0;
+            Y = 0;
+        }
+        public VectorQT(float x, float y)
         {
             X = x;
             Y = y;
         }
 
+        public bool IsEmpty()
+        {
+            return X == 0 && Y == 0;
+        }
         public static VectorQT operator +(VectorQT lhs, VectorQT rhs)
         {
             return new VectorQT(lhs.X + rhs.X, lhs.Y + rhs.Y);

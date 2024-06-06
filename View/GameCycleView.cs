@@ -153,10 +153,10 @@ namespace TankMonogame.View
             spriteBatch.Draw(textures[tankHull.ImageId], tankHull.Pos, null, Color.White, tankHull.Angle, tankHull.Anchor, 1f, SpriteEffects.None, 0f);
 
             var boxT = IObject.GetBox(tankHull);
-            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetLeft() - 1, (int)boxT.GetTop() - 1, 3, 3), Color.Red);
-            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetRight() - 1, (int)boxT.GetTop() - 1, 3, 3), Color.Red);
-            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetRight() - 1, (int)boxT.GetBottom() - 1, 3, 3), Color.Red);
-            spriteBatch.Draw(pointTexture, new Rectangle((int)boxT.GetLeft() - 1, (int)boxT.GetBottom() - 1, 3, 3), Color.Red);
+            foreach(var corner in boxT.Corners())
+            {
+                spriteBatch.Draw(pointTexture, new Rectangle((int)corner.X - 1, (int)corner.Y - 1, 3, 3), Color.Red);
+            }
 
             spriteBatch.Draw(textures[barrelAndTower.ImageId], barrelAndTower.Pos, null, Color.White, barrelAndTower.Angle, barrelAndTower.Anchor, 1f, SpriteEffects.None, 0f);
 

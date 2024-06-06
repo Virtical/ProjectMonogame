@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using TankMonogame.Shared.Interface;
+using TankMonogame.Model.GJKAlgorithm;
 
 namespace TankMonogame.Model.QuadTreeAlgorithm
 {
@@ -95,7 +96,6 @@ namespace TankMonogame.Model.QuadTreeAlgorithm
 
             if (!box.Contains(mGetBox.Invoke(value)))
             {
-                var i = box.Contains(mGetBox.Invoke(value));
                 throw new InvalidOperationException("Box does not contain the value.");
             }
 
@@ -254,14 +254,14 @@ namespace TankMonogame.Model.QuadTreeAlgorithm
                 throw new ArgumentNullException(nameof(node));
             }
 
-            if (!queryBox.Intersects(box))
+            if (!GJK.DefinitionOfCollision(queryBox, box))
             {
                 throw new InvalidOperationException("Only no leaves can be merge.");
             }
 
             foreach (var value in node.Values)
             {
-                if (queryBox.Intersects(mGetBox(value)))
+                if (GJK.DefinitionOfCollision(queryBox, mGetBox(value)))
                 {
                     values.Add(value);
                 }
@@ -272,60 +272,60 @@ namespace TankMonogame.Model.QuadTreeAlgorithm
                 for (int i = 0; i < node.Children.Count(); ++i)
                 {
                     var childBox = ComputeBox(box, i);
-                    if (queryBox.Intersects(childBox))
+                    if (GJK.DefinitionOfCollision(queryBox, childBox))
                     {
                         query(node.Children[i], childBox, queryBox, values);
                     }
                 }
             }
         }
-        public List<Tuple<T, T>> FindAllIntersections()
-        {
-            var intersections = new List<Tuple<T, T>>();
-            findAllIntersections(mRoot, intersections);
-            return intersections;
-        }
+    //    public List<Tuple<T, T>> FindAllIntersections()
+    //    {
+    //        var intersections = new List<Tuple<T, T>>();
+    //        findAllIntersections(mRoot, intersections);
+    //        return intersections;
+    //    }
 
-        void findAllIntersections(Node node, List<Tuple<T, T>> intersections)
-        {
-            for (int i = 0; i < node.Values.Count; ++i)
-            {
-                for (int j = 0; j < i; ++j)
-                {
-                    if (mGetBox(node.Values[i]).Intersects(mGetBox(node.Values[j])))
-                        intersections.Add(new Tuple<T, T>(node.Values[i], node.Values[j]));
-                }
-            }
+    //    void findAllIntersections(Node node, List<Tuple<T, T>> intersections)
+    //    {
+    //        for (int i = 0; i < node.Values.Count; ++i)
+    //        {
+    //            for (int j = 0; j < i; ++j)
+    //            {
+    //                if (mGetBox(node.Values[i]).Intersects(mGetBox(node.Values[j])))
+    //                    intersections.Add(new Tuple<T, T>(node.Values[i], node.Values[j]));
+    //            }
+    //        }
 
-            if (!IsLeaf(node))
-            {
-                foreach (var child in node.Children)
-                {
-                    foreach (var value in node.Values)
-                        findIntersectionsInDescendants(child, value, intersections);
-                }
+    //        if (!IsLeaf(node))
+    //        {
+    //            foreach (var child in node.Children)
+    //            {
+    //                foreach (var value in node.Values)
+    //                    findIntersectionsInDescendants(child, value, intersections);
+    //            }
 
-                foreach (var child in node.Children)
-                    findAllIntersections(child, intersections);
-            }
-        }
+    //            foreach (var child in node.Children)
+    //                findAllIntersections(child, intersections);
+    //        }
+    //    }
 
-        void findIntersectionsInDescendants(Node node, T value, List<Tuple<T, T>> intersections)
-        {
-            foreach (var other in node.Values)
-            {
-                if (mGetBox(value).Intersects(mGetBox(other)))
-                    intersections.Add(new Tuple<T, T>(value, other));
-            }
+    //    void findIntersectionsInDescendants(Node node, T value, List<Tuple<T, T>> intersections)
+    //    {
+    //        foreach (var other in node.Values)
+    //        {
+    //            if (mGetBox(value).Intersects(mGetBox(other)))
+    //                intersections.Add(new Tuple<T, T>(value, other));
+    //        }
 
-            if (!IsLeaf(node))
-            {
-                foreach (var child in node.Children)
-                {
-                    findIntersectionsInDescendants(child, value, intersections);
-                }
-            }
-        }
+    //        if (!IsLeaf(node))
+    //        {
+    //            foreach (var child in node.Children)
+    //            {
+    //                findIntersectionsInDescendants(child, value, intersections);
+    //            }
+    //        }
+    //    }
 
     }
 }
