@@ -17,4 +17,6 @@ This architecture enhances code maintainability, testability, and flexibility.
 2) skid steering [magic formula] to simulate tank control
 3) QuadTree to optimize collision handling
 4) Gilbert Johnson Keerthi Algorithm (GJK) for definition of collisions
-5) StateMashine for logic of Underground Launcher
+5) StateMashine for logic of Underground Launcher <br>
+![image](https://github.com/Virtical/ProjectMonogame/assets/138823554/ac41c781-a04c-4a8d-b696-2718742fd4f9)
+
