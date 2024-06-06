@@ -16,3 +16,4 @@ This architecture enhances code maintainability, testability, and flexibility.
 1) Random walk algorithm to generate the main route
 2) skid steering [magic formula] to simulate tank control
 3) QuadTree to optimize collision handling
+4) Gilbert Johnson Keerthi Algorithm (GJK) for definition of collisions
