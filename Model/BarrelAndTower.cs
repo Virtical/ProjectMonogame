@@ -21,8 +21,8 @@ namespace TankMonogame.Model
 
         public List<Bullet> Bullets = new List<Bullet>();
 
-        public bool IsAnimationShoot = false;
         public int? AnimationFrame = null;
+
         private int[] animation = new int[9] { -2, -4, -6, -8, -10, -8, -6, -4, -2};
 
         public void Update()

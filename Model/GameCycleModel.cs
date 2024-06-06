@@ -17,6 +17,7 @@ namespace TankMonogame.Model
         private TankHull tankHull;
         private BarrelAndTower barrelAndTower;
         private List<Bullet> bullets;
+        private List<Explosion> explosions;
         private double timeLastShoot = 0;
 
         private bool IsPossibleShoot = true;
@@ -62,6 +63,7 @@ namespace TankMonogame.Model
             };
 
             bullets = new List<Bullet>();
+            explosions = new List<Explosion>();
         }
   
         public void Update()
@@ -79,7 +81,8 @@ namespace TankMonogame.Model
                 TankHull = tankHull,
                 BarrelAndTower = barrelAndTower,
                 Map = map,
-                Bullets = bullets
+                Bullets = bullets,
+                Explosions = explosions
             });                  
         }
 
@@ -174,8 +177,34 @@ namespace TankMonogame.Model
                 var staticNodesHit = map.statictree.Query(IObject.GetBox(bullets[i]));
                 foreach (var staticNode in staticNodesHit)
                 {
+                    var newExplosion = new Explosion
+                    {
+                        Pos = bullets[i].Pos,
+                        ImageId = 4,
+                        Speed = 0,
+                        Angle = bullets[i].Angle,
+                        MaxSpeed = 0,
+                        Anchor = new Vector2(120, 32),
+                        LeftTop = new Vector2(-120, -32),
+                        RightBottom = new Vector2(0, 32)
+                    };
+                    explosions.Add(newExplosion);
                     bullets.RemoveAt(i);
                     break;
+                }
+            }
+        }
+        public void UpdateExplosion()
+        {
+            for (int i = 0; i < explosions.Count; i++)
+            {
+                if (explosions[i].AnimationFrame == 3)
+                {
+                    explosions.RemoveAt(i);
+                }
+                else
+                {
+                    explosions[i].AnimationFrame++;
                 }
             }
         }

@@ -16,6 +16,7 @@ namespace TankMonogame.Shared.Interface
         void ChangeTankRotate(DirectionOfRotation dir);
         void ChangeTurretRotate(MouseState mouseState);
         void TankShoot(GameTime time);
+        void UpdateExplosion();
         void StopTankShoot();
         void CheckBulletsBoundary();
         void TankSlowdownSpeed();
@@ -26,8 +27,9 @@ namespace TankMonogame.Shared.Interface
     public class GameplayEventArgs : EventArgs
     {
         public TankHull TankHull { get; set; }
-        public BarrelAndTower BarrelAndTower{ get; set; }
+        public BarrelAndTower BarrelAndTower { get; set; }
         public Map Map { get; set; }
         public List<Bullet> Bullets { get; set; }
+        public List<Explosion> Explosions {get;set;}
     }
 }

@@ -52,7 +52,7 @@ namespace TankMonogame.Model.GJKAlgorithm
                 throw new ArgumentException("Borders or its Vectors list is null or empty.");
             }
 
-            Vector2 farthestVector = new Vector2(borders.GetLeft(), borders.GetTop());
+            Vector2 farthestVector = borders.GetTopLeft().ToVector2();
             float maxDotProduct = Vector2.Dot(farthestVector, direction);
 
             foreach (var vector in borders.Corners())

@@ -254,14 +254,14 @@ namespace TankMonogame.Model.QuadTreeAlgorithm
                 throw new ArgumentNullException(nameof(node));
             }
 
-            if (!GJK.DefinitionOfCollision(queryBox, box))
+            if (!GJK.DefinitionOfCollision(box, queryBox))
             {
                 throw new InvalidOperationException("Only no leaves can be merge.");
             }
 
             foreach (var value in node.Values)
             {
-                if (GJK.DefinitionOfCollision(queryBox, mGetBox(value)))
+                if (GJK.DefinitionOfCollision(mGetBox(value), queryBox))
                 {
                     values.Add(value);
                 }
@@ -272,7 +272,7 @@ namespace TankMonogame.Model.QuadTreeAlgorithm
                 for (int i = 0; i < node.Children.Count(); ++i)
                 {
                     var childBox = ComputeBox(box, i);
-                    if (GJK.DefinitionOfCollision(queryBox, childBox))
+                    if (GJK.DefinitionOfCollision(childBox, queryBox))
                     {
                         query(node.Children[i], childBox, queryBox, values);
                     }
