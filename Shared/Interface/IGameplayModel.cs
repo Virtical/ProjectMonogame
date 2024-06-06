@@ -20,16 +20,20 @@ namespace TankMonogame.Shared.Interface
         void StopTankShoot();
         void CheckBulletsBoundary();
         void TankSlowdownSpeed();
+        void StopUndergroundLauncherShot();
         void TankSlowdownRotate();
         void CheckTankBoundary();
+        void UndergroundLauncherShot(GameTime gameTime);
         void Initialize();
     }
     public class GameplayEventArgs : EventArgs
     {
         public TankHull TankHull { get; set; }
-        public Turret turret { get; set; }
+        public Turret Turret { get; set; }
+        public UndergroundLauncher UndergroundLauncher { get; set; }
         public Map Map { get; set; }
         public List<Bullet> Bullets { get; set; }
         public List<Explosion> Explosions {get;set;}
+        public Queue<Point> BurnPoint {  get; set; }
     }
 }

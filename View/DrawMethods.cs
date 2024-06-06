@@ -44,5 +44,13 @@ namespace TankMonogame.View
                 spriteBatch.Draw(textures[explosion.ImageId], explosion.Pos, sourceRectangle, Color.White, explosion.Angle, explosion.Anchor, 1.0f, SpriteEffects.None, 1);
             }
         }
+
+        public static void Draw(this SpriteBatch spriteBatch, HashSet<Burrel> burrels, Dictionary<int, Texture2D> textures)
+        {
+            foreach (var burrel in burrels)
+            {
+                spriteBatch.Draw(textures[burrel.ImageId], burrel.LTPoint.ToVector2(), Color.White);
+            }
+        }
     }
 }

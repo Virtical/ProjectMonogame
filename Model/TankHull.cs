@@ -18,7 +18,6 @@ namespace TankMonogame.Model
         public float RotationSpeed { get; set; }
         public float MaxRotationSpeed { get; set; }
         public Vector2 Anchor { get; set; }
-        public Turret Turret { get; set; }
         public Vector2 LeftTop { get; set; }
         public Vector2 RightBottom { get; set; }
         public Vector2 VelocityProjection { get; set; }

@@ -6,7 +6,6 @@ using TankMonogame.Model.QuadTreeAlgorithm;
 using TankMonogame.Shared.Enums;
 using TankMonogame.Model.RandomWalkAlgorithm;
 using System.Linq;
-using System.Threading;
 
 namespace TankMonogame.Model
 {
@@ -90,6 +89,32 @@ namespace TankMonogame.Model
                     {
                         Cells.Add(new Cell(new Point(x, y), (TypeCell)r.Next(0, 3)));
                     }
+                }
+            }
+        }
+
+        public Point GetRandomCleanPlace()
+        {
+            while (true)
+            {
+                var randomPoint = trail.ToArray()[r.Next(trail.Count-1)];
+
+                var IsAllCellTrails = true;
+                for (int x = -1; x < 2; x++)
+                {
+                    for (int y = -1; y < 2; y++)
+                    {
+                        if (!trail.Contains(randomPoint + new Point(x * 64, y * 64)) || burrels.Contains(new Burrel(randomPoint + new Point(x * 64, y * 64))))
+                        {
+                            IsAllCellTrails = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (IsAllCellTrails)
+                {
+                    return randomPoint;
                 }
             }
         }

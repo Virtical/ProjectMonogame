@@ -16,12 +16,16 @@ namespace TankMonogame.Model
         private Map map;
         private TankHull tankHull;
         private Turret turret;
+        private UndergroundLauncher undergroundLauncher;
         private List<Bullet> bullets;
         private List<Explosion> explosions;
-        private double timeLastShoot = 0;
+        private Queue<Point> burnPoint;
+        private double timeLastTankShoot = 0;
+        private double timeLastUndergroundLauncherShoot = 0;
 
-        private bool IsPossibleShoot = true;
-        
+        private bool IsPossibleTankShoot = true;
+        private bool IsPossibleUndergroundLauncherShoot = true;
+
         public BoxQT GetBox()
         {
             return IObject.GetBox(tankHull);
@@ -62,8 +66,21 @@ namespace TankMonogame.Model
                 RightBottom = new Vector2(85, 23)
             };
 
+            undergroundLauncher = new UndergroundLauncher
+            {
+                Pos = new Vector2(1312, 800),
+                ImageId = 6,
+                Speed = 0,
+                Angle = 0,
+                MaxSpeed = 0,
+                Anchor = new Vector2(29, 48),
+                LeftTop = new Vector2(-29, -48),
+                RightBottom = new Vector2(30, 30)
+            };
+
             bullets = new List<Bullet>();
             explosions = new List<Explosion>();
+            burnPoint = new Queue<Point>();
         }
   
         public void Update()
@@ -76,14 +93,38 @@ namespace TankMonogame.Model
                 bullet.Update();
             }
 
-            Updated.Invoke(this, new GameplayEventArgs 
-            { 
+            Updated.Invoke(this, new GameplayEventArgs
+            {
                 TankHull = tankHull,
-                turret = turret,
+                Turret = turret,
                 Map = map,
                 Bullets = bullets,
-                Explosions = explosions
+                Explosions = explosions,
+                UndergroundLauncher = undergroundLauncher,
+                BurnPoint = burnPoint
             });                  
+        }
+        public void UndergroundLauncherShot(GameTime gameTime)
+        {
+            if (IsPossibleUndergroundLauncherShoot)
+            {
+                if ((gameTime.TotalGameTime.TotalSeconds - timeLastUndergroundLauncherShoot) > 3)
+                {
+                    burnPoint.Enqueue(map.GetRandomCleanPlace());
+                    timeLastUndergroundLauncherShoot = gameTime.TotalGameTime.TotalSeconds;
+                    undergroundLauncher.NextState();
+                }
+                else
+                {
+                    undergroundLauncher.AnimationFrame = (int)undergroundLauncher.CurState * 2 + 1;
+                }
+                IsPossibleUndergroundLauncherShoot = false;
+            }
+        }
+
+        public void StopUndergroundLauncherShot()
+        {
+            IsPossibleUndergroundLauncherShoot = true;
         }
 
         public void ChangeTurretRotate(MouseState mouseState)
@@ -262,9 +303,9 @@ namespace TankMonogame.Model
             }
         }
 
-        public void TankShoot(GameTime time)
+        public void TankShoot(GameTime gameTime)
         {
-            if (IsPossibleShoot && time.TotalGameTime.TotalSeconds - timeLastShoot > 1)
+            if (IsPossibleTankShoot && gameTime.TotalGameTime.TotalSeconds - timeLastTankShoot > 1)
             {
                 var newBullet = new Bullet
                 {
@@ -279,16 +320,16 @@ namespace TankMonogame.Model
                 };
 
                 bullets.Add(newBullet);
-                timeLastShoot = time.TotalGameTime.TotalSeconds;
+                timeLastTankShoot = gameTime.TotalGameTime.TotalSeconds;
                 turret.AnimationFrame = 0;
             }
 
-            IsPossibleShoot = false;
+            IsPossibleTankShoot = false;
         }
 
         public void StopTankShoot()
         {
-            IsPossibleShoot = true;
+            IsPossibleTankShoot = true;
         }
     }
 }

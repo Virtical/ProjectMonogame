@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using TankMonogame.Model;
 using TankMonogame.Shared.Interface;
 using TankMonogame.Shared.Enums;
+using System.Diagnostics;
 namespace TankMonogame.View
 {
     public class GameplayView : Game, IGameplayView
@@ -13,7 +14,7 @@ namespace TankMonogame.View
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
-        public event EventHandler CycleFinished = delegate { };
+        public event EventHandler<EventArgs> CycleFinished = delegate { };
         public event EventHandler<DirectionOfMovement> TankMoved = delegate { };
         public event EventHandler<DirectionOfRotation> TankRotate = delegate { };
         public event EventHandler<EventArgs> PlayerSlowdownSpeed = delegate { };
@@ -21,15 +22,21 @@ namespace TankMonogame.View
         public event EventHandler<GameTime> TankShoot = delegate { };
         public event EventHandler<EventArgs> StopTankShoot = delegate { };
         public event EventHandler<MouseState> TurretRotate = delegate { };
+        public event EventHandler<GameTime> UndergroundLauncherShot;
+        public event EventHandler<EventArgs> StopUndergroundLauncherShot;
 
         private Map map;
         private TankHull tankHull;
-        private Turret barrelAndTower;
+        private Turret turret;
+        private UndergroundLauncher undergroundLauncher;
+        private Queue<Point> burnPoint;
         private List<Bullet> bullets;
         private List<Explosion> explosions;
 
         private Dictionary<TypeCell, Texture2D> textureCell = new Dictionary<TypeCell, Texture2D>();
         private Dictionary<int, Texture2D> textures = new Dictionary<int, Texture2D>();
+
+        Texture2D pointTexture;
 
 
         public GameplayView()
@@ -55,6 +62,8 @@ namespace TankMonogame.View
             textures.Add(3, Content.Load<Texture2D>("Bullet"));
             textures.Add(4, Content.Load<Texture2D>("Explosion"));
             textures.Add(5, Content.Load<Texture2D>("Barrels"));
+            textures.Add(6, Content.Load<Texture2D>("UndergroundLauncher"));
+            textures.Add(7, Content.Load<Texture2D>("Lava"));
 
             textureCell[TypeCell.Level1] = Content.Load<Texture2D>("FloorLevel1");
             textureCell[TypeCell.Level2] = Content.Load<Texture2D>("FloorLevel2");
@@ -64,15 +73,24 @@ namespace TankMonogame.View
             textureCell[TypeCell.Level6] = Content.Load<Texture2D>("FloorLevel6");
             textureCell[TypeCell.Level7] = Content.Load<Texture2D>("FloorLevel7");
             textureCell[TypeCell.Level8] = Content.Load<Texture2D>("FloorLevel8");
+
+            pointTexture = new Texture2D(GraphicsDevice, 3, 3);
+            Color[] colorData = new Color[9];
+            for (int i = 0; i < colorData.Length; ++i)
+                colorData[i] = Color.Red;
+
+            pointTexture.SetData(colorData);
         }
 
-        public void LoadGameCycleParameters(Map map, TankHull tankHull, Turret turret, List<Bullet> bullets, List<Explosion> explosions)
+        public void LoadGameCycleParameters(Map map, TankHull tankHull, Turret turret, List<Bullet> bullets, List<Explosion> explosions, UndergroundLauncher undergroundLauncher, Queue<Point> burnPoint)
         {
             this.map = map;
             this.tankHull = tankHull;
-            this.barrelAndTower = turret;
+            this.turret = turret;
             this.bullets = bullets;
             this.explosions = explosions;
+            this.undergroundLauncher = undergroundLauncher;
+            this.burnPoint = burnPoint;
         }
 
         protected override void Update(GameTime gameTime)
@@ -95,6 +113,7 @@ namespace TankMonogame.View
 
             bool isMoving = false;
             bool isRotating = false;
+            bool isUndergroundLauncherShot = false;
 
             foreach (var k in keys)
             {
@@ -116,10 +135,19 @@ namespace TankMonogame.View
                         TankRotate.Invoke(this, DirectionOfRotation.Left);
                         isRotating = true;
                         break;
+                    case Keys.Space:
+                        UndergroundLauncherShot.Invoke(this, gameTime);
+                        isUndergroundLauncherShot = true;
+                        break;
                     case Keys.Escape:
                         Exit();
                         break;
                 }
+            }
+
+            if (!isUndergroundLauncherShot)
+            {
+                StopUndergroundLauncherShot.Invoke(this, EventArgs.Empty);
             }
 
             if (!isMoving)
@@ -132,7 +160,7 @@ namespace TankMonogame.View
                 PlayerSlowdownRotate.Invoke(this, EventArgs.Empty);
             }
 
-            CycleFinished.Invoke(this, new EventArgs());
+            CycleFinished.Invoke(this, EventArgs.Empty);
 
             base.Update(gameTime);
         }
@@ -145,13 +173,23 @@ namespace TankMonogame.View
 
             spriteBatch.Draw(map, textureCell);
             spriteBatch.Draw(tankHull, textures);
-            spriteBatch.Draw(barrelAndTower, textures);
+            spriteBatch.Draw(turret, textures);
             spriteBatch.Draw(bullets, textures);
             spriteBatch.Draw(explosions, textures);
+            spriteBatch.Draw(map.burrels, textures);
 
-            foreach(var burrel in map.burrels) 
+            Rectangle sourceRectangle = new Rectangle(59 * undergroundLauncher.AnimationFrame, 0, 59, 78);
+            spriteBatch.Draw(textures[undergroundLauncher.ImageId], undergroundLauncher.Pos, sourceRectangle, Color.White, undergroundLauncher.Angle, undergroundLauncher.Anchor, 1.0f, SpriteEffects.None, 1);
+
+            foreach (var p in burnPoint)
             {
-                spriteBatch.Draw(textures[burrel.ImageId], burrel.LTPoint.ToVector2(), Color.White);
+                for (int x = -1; x < 2; x++)
+                {
+                    for (int y = -1; y < 2; y++)
+                    {
+                        spriteBatch.Draw(textures[7], (p + new Point(x * 64, y * 64)).ToVector2(), Color.White);
+                    }
+                }
             }
 
             spriteBatch.End();
