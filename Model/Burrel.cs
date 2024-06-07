@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using TankMonogame.Model.QuadTreeAlgorithm;
 using TankMonogame.Shared.Enums;
@@ -15,6 +16,7 @@ namespace TankMonogame.Model
             RBPoint = position + new Point(64, 64);
             LBPoint = position + new Point(0, 64);
         }
+        public static Texture2D Texture { get; set; }
 
         public readonly Point LTPoint;
         public readonly Point RTPoint;

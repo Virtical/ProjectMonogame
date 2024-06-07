@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace TankMonogame.Model
 {
     public class Explosion: IObject
     {
+        public static Texture2D Texture { get; set; }
         public int ImageId { get; set; }
         public Vector2 Pos { get; set; }
         public Vector2 Anchor { get; set; }

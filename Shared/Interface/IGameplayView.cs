@@ -4,6 +4,7 @@ using TankMonogame.Model;
 using TankMonogame.Shared.Enums;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 
 namespace TankMonogame.Shared.Interface
 {
@@ -19,8 +20,9 @@ namespace TankMonogame.Shared.Interface
         event EventHandler<EventArgs> StopTankShoot;
         event EventHandler<GameTime> UndergroundLauncherShot;
         event EventHandler<EventArgs> StopUndergroundLauncherShot;
+        event EventHandler<ContentManager> LoadContentOnModel;
 
-        void LoadGameCycleParameters(Map map, TankHull tankHull, Turret barrelAndTower, List<Bullet> bullets, List<Explosion> explosions, UndergroundLauncher undergroundLauncher, List<Point> burnPoint, List<Rocket> rockets);
+        void LoadGameCycleParameters(Map map, TankHull tankHull, Turret barrelAndTower, List<Bullet> bullets, List<Explosion> explosions, UndergroundLauncher undergroundLauncher, List<Lava> burnPoint, List<Rocket> rockets);
         void Run();
     }
 

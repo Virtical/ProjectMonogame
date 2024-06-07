@@ -8,20 +8,21 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using TankMonogame.Model.AStarAlgorithm;
 using TankMonogame.Model.GJKAlgorithm;
+using Microsoft.Xna.Framework.Content;
+using System.Reflection.Metadata;
 
 namespace TankMonogame.Model
 {
     public class GameplayModel : IGameplayModel
     {
 	    public event EventHandler<GameplayEventArgs> Updated = delegate { };
- 
         private Map map;
         private TankHull tankHull;
         private Turret turret;
         private UndergroundLauncher undergroundLauncher;
         private List<Bullet> bullets;
         private List<Explosion> explosions;
-        private List<Point> burnPoint;
+        private List<Lava> burnPoint;
         private List<Rocket> rockets = new List<Rocket>();
         private double timeLastTankShoot = 0;
         private double timeLastUndergroundLauncherShoot = 0;
@@ -33,6 +34,7 @@ namespace TankMonogame.Model
         {
             return IObject.GetBox(tankHull);
         }
+
         public void Initialize()
         {
             map = new Map(GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width, GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height);
@@ -83,7 +85,7 @@ namespace TankMonogame.Model
 
             bullets = new List<Bullet>();
             explosions = new List<Explosion>();
-            burnPoint = new List<Point>();
+            burnPoint = new List<Lava>();
         }
   
         public void Update()
@@ -101,7 +103,7 @@ namespace TankMonogame.Model
                 rockets[i].Update();
                 if (rockets[i].IsDestroyed == true)
                 {
-                    if(GJK.DefinitionOfCollision(new BoxQT(burnPoint[i].X -64, burnPoint[i].Y - 64, 192, 192), IObject.GetBox(tankHull)))
+                    if(GJK.DefinitionOfCollision(new BoxQT(burnPoint[i].Position.X -64, burnPoint[i].Position.Y - 64, 192, 192), IObject.GetBox(tankHull)))
                     {
                         tankHull.IsDestroyed = true;
                         turret.IsDestroyed = true;
@@ -130,7 +132,10 @@ namespace TankMonogame.Model
                 if ((gameTime.TotalGameTime.TotalSeconds - timeLastUndergroundLauncherShoot) > 3)
                 {
                     var newTarget = map.GetRandomCleanPlace();
-                    burnPoint.Add(newTarget);
+                    burnPoint.Add(new Lava()
+                    {
+                        Position = newTarget
+                    });
 
                     var newRocket = new Rocket
                     {
@@ -370,6 +375,27 @@ namespace TankMonogame.Model
         public void StopTankShoot()
         {
             IsPossibleTankShoot = true;
+        }
+
+        public void LoadContent(ContentManager content)
+        {
+            TankHull.Texture = content.Load<Texture2D>("Tank");
+            Turret.Texture = content.Load<Texture2D>("BarrelAndTower");
+            Bullet.Texture = content.Load<Texture2D>("Bullet");
+            Explosion.Texture = content.Load<Texture2D>("Explosion");
+            Burrel.Texture = content.Load<Texture2D>("Barrels");
+            UndergroundLauncher.Texture = content.Load<Texture2D>("UndergroundLauncher");
+            Lava.Texture = content.Load<Texture2D>("Lava");
+            Rocket.Texture = content.Load<Texture2D>("Rocket");
+
+            Map.TextureCell[TypeCell.Level1] = content.Load<Texture2D>("FloorLevel1");
+            Map.TextureCell[TypeCell.Level2] = content.Load<Texture2D>("FloorLevel2");
+            Map.TextureCell[TypeCell.Level3] = content.Load<Texture2D>("FloorLevel3");
+            Map.TextureCell[TypeCell.Level4] = content.Load<Texture2D>("FloorLevel4");
+            Map.TextureCell[TypeCell.Level5] = content.Load<Texture2D>("FloorLevel5");
+            Map.TextureCell[TypeCell.Level6] = content.Load<Texture2D>("FloorLevel6");
+            Map.TextureCell[TypeCell.Level7] = content.Load<Texture2D>("FloorLevel7");
+            Map.TextureCell[TypeCell.Level8] = content.Load<Texture2D>("FloorLevel8");
         }
     }
 }

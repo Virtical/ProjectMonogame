@@ -13,6 +13,7 @@ namespace TankMonogame.Model
     {
         public readonly int Width;
         public readonly int Height;
+        public static Dictionary<TypeCell, Texture2D> TextureCell = new Dictionary<TypeCell, Texture2D>();
 
         Random r = new Random();
 

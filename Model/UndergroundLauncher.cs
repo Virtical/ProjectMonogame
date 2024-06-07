@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,7 @@ namespace TankMonogame.Model
 {
     public class UndergroundLauncher: IObject
     {
+        public static Texture2D Texture { get; set; }
 
         public int AnimationFrame = 0;
         public float Angle { get; set; }

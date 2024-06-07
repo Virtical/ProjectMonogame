@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using TankMonogame.Model;
 using TankMonogame.Shared.Interface;
 using TankMonogame.Shared.Enums;
-using System.Diagnostics;
+using Microsoft.Xna.Framework.Content;
 namespace TankMonogame.View
 {
     public class GameplayView : Game, IGameplayView
@@ -22,22 +22,18 @@ namespace TankMonogame.View
         public event EventHandler<GameTime> TankShoot = delegate { };
         public event EventHandler<EventArgs> StopTankShoot = delegate { };
         public event EventHandler<MouseState> TurretRotate = delegate { };
-        public event EventHandler<GameTime> UndergroundLauncherShot;
-        public event EventHandler<EventArgs> StopUndergroundLauncherShot;
+        public event EventHandler<GameTime> UndergroundLauncherShot = delegate { };
+        public event EventHandler<EventArgs> StopUndergroundLauncherShot = delegate { };
+        public event EventHandler<ContentManager> LoadContentOnModel = delegate { };
 
         private Map map;
         private TankHull tankHull;
         private Turret turret;
         private UndergroundLauncher undergroundLauncher;
-        private List<Point> burnPoint;
+        private List<Lava> burnPoint;
         private List<Bullet> bullets;
         private List<Explosion> explosions;
         private List<Rocket> rockets;
-
-        private Dictionary<TypeCell, Texture2D> textureCell = new Dictionary<TypeCell, Texture2D>();
-        private Dictionary<int, Texture2D> textures = new Dictionary<int, Texture2D>();
-
-        Texture2D pointTexture;
 
 
         public GameplayView()
@@ -58,33 +54,10 @@ namespace TankMonogame.View
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            textures.Add(1, Content.Load<Texture2D>("Tank"));
-            textures.Add(2, Content.Load<Texture2D>("BarrelAndTower"));
-            textures.Add(3, Content.Load<Texture2D>("Bullet"));
-            textures.Add(4, Content.Load<Texture2D>("Explosion"));
-            textures.Add(5, Content.Load<Texture2D>("Barrels"));
-            textures.Add(6, Content.Load<Texture2D>("UndergroundLauncher"));
-            textures.Add(7, Content.Load<Texture2D>("Lava"));
-            textures.Add(8, Content.Load<Texture2D>("Rocket"));
-
-            textureCell[TypeCell.Level1] = Content.Load<Texture2D>("FloorLevel1");
-            textureCell[TypeCell.Level2] = Content.Load<Texture2D>("FloorLevel2");
-            textureCell[TypeCell.Level3] = Content.Load<Texture2D>("FloorLevel3");
-            textureCell[TypeCell.Level4] = Content.Load<Texture2D>("FloorLevel4");
-            textureCell[TypeCell.Level5] = Content.Load<Texture2D>("FloorLevel5");
-            textureCell[TypeCell.Level6] = Content.Load<Texture2D>("FloorLevel6");
-            textureCell[TypeCell.Level7] = Content.Load<Texture2D>("FloorLevel7");
-            textureCell[TypeCell.Level8] = Content.Load<Texture2D>("FloorLevel8");
-
-            pointTexture = new Texture2D(GraphicsDevice, 3, 3);
-            Color[] colorData = new Color[9];
-            for (int i = 0; i < colorData.Length; ++i)
-                colorData[i] = Color.Red;
-
-            pointTexture.SetData(colorData);
+            LoadContentOnModel.Invoke(this, Content);
         }
 
-        public void LoadGameCycleParameters(Map map, TankHull tankHull, Turret turret, List<Bullet> bullets, List<Explosion> explosions, UndergroundLauncher undergroundLauncher, List<Point> burnPoint, List<Rocket> rockets)
+        public void LoadGameCycleParameters(Map map, TankHull tankHull, Turret turret, List<Bullet> bullets, List<Explosion> explosions, UndergroundLauncher undergroundLauncher, List<Lava> burnPoint, List<Rocket> rockets)
         {
             this.map = map;
             this.tankHull = tankHull;
@@ -174,15 +147,15 @@ namespace TankMonogame.View
 
             spriteBatch.Begin();
 
-            spriteBatch.Draw(map, textureCell);
-            spriteBatch.Draw(bullets, textures);
-            spriteBatch.Draw(explosions, textures);
-            spriteBatch.Draw(map.burrels, textures);
-            spriteBatch.Draw(undergroundLauncher, textures);
-            spriteBatch.Draw(burnPoint, textures);
-            spriteBatch.Draw(rockets, textures);
-            spriteBatch.Draw(tankHull, textures);
-            spriteBatch.Draw(turret, textures);
+            spriteBatch.Draw(map);
+            spriteBatch.Draw(bullets);
+            spriteBatch.Draw(explosions);
+            spriteBatch.Draw(map.burrels);
+            spriteBatch.Draw(undergroundLauncher);
+            spriteBatch.Draw(burnPoint);
+            spriteBatch.Draw(rockets);
+            spriteBatch.Draw(tankHull);
+            spriteBatch.Draw(turret);
 
             spriteBatch.End();
         }

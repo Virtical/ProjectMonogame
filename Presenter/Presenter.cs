@@ -3,6 +3,8 @@ using TankMonogame.Shared.Interface;
 using TankMonogame.Shared.Enums;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace TankMonogame.Presenter
 {
@@ -26,6 +28,7 @@ namespace TankMonogame.Presenter
             gameplayView.StopUndergroundLauncherShot += ViewModelStopUndergroundLauncherShot;
             gameplayView.StopTankShoot += ViewModelStopTankShoot;
             gameplayView.TurretRotate += ViewModelRotateTurret;
+            gameplayView.LoadContentOnModel += LoadContent;
             gameplayModel.Updated += ModelViewUpdate;
 
             gameplayModel.Initialize();
@@ -88,7 +91,10 @@ namespace TankMonogame.Presenter
         {
             gameplayModel.Update();
         }
-
+        public void LoadContent(object sender, ContentManager content)
+        {
+            gameplayModel.LoadContent(content);
+        }
         public void LaunchGame()
         {
             gameplayView.Run();

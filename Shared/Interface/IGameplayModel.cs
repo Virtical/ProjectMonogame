@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,7 @@ namespace TankMonogame.Shared.Interface
         void CheckTankBoundary();
         void UndergroundLauncherShot(GameTime gameTime);
         void Initialize();
+        void LoadContent(ContentManager content);
     }
     public class GameplayEventArgs : EventArgs
     {
@@ -34,7 +36,7 @@ namespace TankMonogame.Shared.Interface
         public Map Map { get; set; }
         public List<Bullet> Bullets { get; set; }
         public List<Explosion> Explosions {get;set;}
-        public List<Point> BurnPoint {  get; set; }
+        public List<Lava> BurnPoint {  get; set; }
         public List<Rocket> Rockets { get; set; }
     }
 }

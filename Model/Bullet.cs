@@ -7,6 +7,7 @@ namespace TankMonogame.Model
 {
     public class Bullet : IObject
     {
+        public static Texture2D Texture { get; set; }
         public int ImageId { get; set; }
         public Vector2 Pos { get; set; }
         public Vector2 Anchor { get; set; }

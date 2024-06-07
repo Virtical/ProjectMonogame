@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using TankMonogame.Model.AStarAlgorithm;
@@ -8,6 +9,7 @@ namespace TankMonogame.Model
 {
     public class Rocket : IObject
     {
+        public static Texture2D Texture { get; set; }
         public int ImageId { get; set; }
         public Vector2 Pos { get; set; }
         public Vector2 Anchor { get; set; }

@@ -1,17 +1,1 @@
 Source File,Dest File,Processor Type,Content Type,Source File Size,Dest File Size,Build Seconds
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/BarrelAndTower.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/BarrelAndTower.xnb","TextureProcessor","Texture2DContent",4264,21141,0,1468565
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/Barrels.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/Barrels.xnb","TextureProcessor","Texture2DContent",6056,16469,0,007217
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/Bullet.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/Bullet.xnb","TextureProcessor","Texture2DContent",563,841,0,0023771
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/Explosion.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/Explosion.xnb","TextureProcessor","Texture2DContent",19776,125845,0,0056709
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel1.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/FloorLevel1.xnb","TextureProcessor","Texture2DContent",357,16469,0,0033019
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel2.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/FloorLevel2.xnb","TextureProcessor","Texture2DContent",478,16469,0,0030927
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel3.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/FloorLevel3.xnb","TextureProcessor","Texture2DContent",540,16469,0,003125
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel4.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/FloorLevel4.xnb","TextureProcessor","Texture2DContent",660,16469,0,0032012
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel5.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/FloorLevel5.xnb","TextureProcessor","Texture2DContent",792,16469,0,0036049
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel6.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/FloorLevel6.xnb","TextureProcessor","Texture2DContent",957,16469,0,0036016
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel7.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/FloorLevel7.xnb","TextureProcessor","Texture2DContent",672,16469,0,0027307
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel8.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/FloorLevel8.xnb","TextureProcessor","Texture2DContent",1025,16469,0,0026651
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/Lava.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/Lava.xnb","TextureProcessor","Texture2DContent",993,16469,0,0025515
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/Rocket.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/Rocket.xnb","TextureProcessor","Texture2DContent",2180,4165,0,0020238
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/Tank.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/Tank.xnb","TextureProcessor","Texture2DContent",11084,41585,0,0033468
-"C:/Users/Virtical/Desktop/C#/TankMonogame/Content/UndergroundLauncher.png","C:/Users/Virtical/Desktop/C#/TankMonogame/Content/bin/DesktopGL/Content/UndergroundLauncher.xnb","TextureProcessor","Texture2DContent",18609,110533,0,0082458
