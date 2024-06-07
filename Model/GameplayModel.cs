@@ -7,6 +7,7 @@ using TankMonogame.Model.QuadTreeAlgorithm;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using TankMonogame.Model.AStarAlgorithm;
+using TankMonogame.Model.GJKAlgorithm;
 
 namespace TankMonogame.Model
 {
@@ -100,6 +101,11 @@ namespace TankMonogame.Model
                 rockets[i].Update();
                 if (rockets[i].IsDestroyed == true)
                 {
+                    if(GJK.DefinitionOfCollision(new BoxQT(burnPoint[i].X -64, burnPoint[i].Y - 64, 192, 192), IObject.GetBox(tankHull)))
+                    {
+                        tankHull.IsDestroyed = true;
+                        turret.IsDestroyed = true;
+                    }
                     rockets.RemoveAt(i);
                     burnPoint.RemoveAt(i);
                 }
@@ -121,7 +127,7 @@ namespace TankMonogame.Model
         {
             if (IsPossibleUndergroundLauncherShoot)
             {
-                if ((gameTime.TotalGameTime.TotalSeconds - timeLastUndergroundLauncherShoot) > 0.5)
+                if ((gameTime.TotalGameTime.TotalSeconds - timeLastUndergroundLauncherShoot) > 3)
                 {
                     var newTarget = map.GetRandomCleanPlace();
                     burnPoint.Add(newTarget);

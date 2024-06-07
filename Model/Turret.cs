@@ -25,24 +25,29 @@ namespace TankMonogame.Model
 
         private int[] animation = new int[9] { -2, -4, -6, -8, -10, -8, -6, -4, -2};
 
+        public bool IsDestroyed = false;
+
         public void Update()
         {
-            Angle += RotationSpeed;
+            if (!IsDestroyed)
+            {
+                Angle += RotationSpeed;
 
-            if (AnimationFrame != null) 
-            {
-                Anchor = new Vector2(27, 23) - new Vector2(animation[AnimationFrame.Value], 0);
-                AnimationFrame++;
-                if (AnimationFrame == 8)
+                if (AnimationFrame != null)
                 {
-                    AnimationFrame = null;
+                    Anchor = new Vector2(27, 23) - new Vector2(animation[AnimationFrame.Value], 0);
+                    AnimationFrame++;
+                    if (AnimationFrame == 8)
+                    {
+                        AnimationFrame = null;
+                    }
                 }
+                else
+                {
+                    Anchor = new Vector2(27, 23);
+                }
+                Pos = Tank.Pos - new Vector2(15, 15) * new Vector2((float)Math.Cos(Tank.Angle), (float)Math.Sin(Tank.Angle));
             }
-            else
-            {
-                Anchor = new Vector2(27, 23);
-            }
-            Pos = Tank.Pos - new Vector2(15, 15) * new Vector2((float)Math.Cos(Tank.Angle), (float)Math.Sin(Tank.Angle));
         }
     }
 }

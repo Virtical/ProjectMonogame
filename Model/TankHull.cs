@@ -23,6 +23,8 @@ namespace TankMonogame.Model
         public Vector2 VelocityProjection { get; set; }
         public Vector2 Velocity { get; set; }
 
+        public bool IsDestroyed = false;
+
         public Dictionary<DirectionOfMovement, float> MovementDirectionMultipliers = new Dictionary<DirectionOfMovement, float>()
         {
             { DirectionOfMovement.Forward, 1 },
@@ -37,10 +39,13 @@ namespace TankMonogame.Model
 
         public void Update()
         {
-            Angle += RotationSpeed;
-            Velocity = Speed * new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
-            Pos += Velocity - VelocityProjection;
-            VelocityProjection = new Vector2(0, 0);
+            if (!IsDestroyed)
+            {
+                Angle += RotationSpeed;
+                Velocity = Speed * new Vector2((float)Math.Cos(Angle), (float)Math.Sin(Angle));
+                Pos += Velocity - VelocityProjection;
+                VelocityProjection = new Vector2(0, 0);
+            }
         }
     }
 }
