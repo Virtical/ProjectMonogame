@@ -10,7 +10,7 @@ namespace TankMonogame.Model
     public class Turret : IObject
     {
         public static Texture2D Texture { get; set; }
-        public int ImageId { get; set; }
+        public int Id { get; set; }
         public Vector2 Pos { get; set; }
         public float Speed { get; set; }
         public int MaxSpeed { get; set; }

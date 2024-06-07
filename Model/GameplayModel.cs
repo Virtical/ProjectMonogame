@@ -42,7 +42,7 @@ namespace TankMonogame.Model
             tankHull = new TankHull
             {
                 Pos = new Vector2(200, 350),
-                ImageId = 1,
+                Id = 1,
                 Speed = 0,
                 Angle = 0,
                 RotationSpeed = 0,
@@ -60,7 +60,7 @@ namespace TankMonogame.Model
             turret = new Turret
             {
                 Pos = tankHull.Pos - new Vector2(15, 15) * new Vector2((float)Math.Cos(tankHull.Angle), (float)Math.Sin(tankHull.Angle)),
-                ImageId = 2,
+                Id = 2,
                 Speed = 0,
                 Angle = 0,
                 RotationSpeed = 0,
@@ -74,7 +74,7 @@ namespace TankMonogame.Model
             undergroundLauncher = new UndergroundLauncher
             {
                 Pos = new Vector2(1312, 800),
-                ImageId = 6,
+                Id = 6,
                 Speed = 0,
                 Angle = 0,
                 MaxSpeed = 0,
@@ -140,7 +140,7 @@ namespace TankMonogame.Model
                     var newRocket = new Rocket
                     {
                         Pos = undergroundLauncher.Pos + undergroundLauncher.StartingPoints[undergroundLauncher.CurState],
-                        ImageId = 8,
+                        Id = 8,
                         Speed = 5,
                         Angle = 1.570796f,
                         MaxSpeed = 5,
@@ -285,7 +285,7 @@ namespace TankMonogame.Model
                     var newExplosion = new Explosion
                     {
                         Pos = bullet.Pos + new Vector2((float)Math.Cos(bullet.Angle) * 17, (float)Math.Sin(bullet.Angle) * 17),
-                        ImageId = 4,
+                        Id = 4,
                         Speed = 0,
                         Angle = bullet.Angle,
                         MaxSpeed = 0,
@@ -308,7 +308,7 @@ namespace TankMonogame.Model
                     var newExplosion = new Explosion
                     {
                         Pos = bullet.Pos + new Vector2((float)Math.Cos(bullet.Angle) * 17, (float)Math.Sin(bullet.Angle) * 17),
-                        ImageId = 4,
+                        Id = 4,
                         Speed = 0,
                         Angle = bullet.Angle,
                         MaxSpeed = 0,
@@ -350,12 +350,12 @@ namespace TankMonogame.Model
 
         public void TankShoot(GameTime gameTime)
         {
-            if (IsPossibleTankShoot && gameTime.TotalGameTime.TotalSeconds - timeLastTankShoot > 1)
+            if (IsPossibleTankShoot && gameTime.TotalGameTime.TotalSeconds - timeLastTankShoot > 1 && !tankHull.IsDestroyed)
             {
                 var newBullet = new Bullet
                 {
                     Pos = new Vector2((int)(turret.Pos.X + turret.RightBottom.X * Math.Cos(turret.Angle)), (int)(turret.Pos.Y + turret.RightBottom.X * Math.Sin(turret.Angle))),
-                    ImageId = 3,
+                    Id = 3,
                     Speed = 15f,
                     Angle = turret.Angle,
                     MaxSpeed = 15,

@@ -20,7 +20,7 @@ namespace TankMonogame.Model
         public Vector2 LeftTop { get; set; }
         public Vector2 RightBottom { get; set; }
         public Vector2 Anchor { get; set; }
-        public int ImageId { get; set; }
+        public int Id { get; set; }
         public Vector2 Pos { get; set; }
 
         public State CurState = State.ThreeRockets;

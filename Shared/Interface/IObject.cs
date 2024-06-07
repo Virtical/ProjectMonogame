@@ -8,7 +8,7 @@ namespace TankMonogame.Shared.Interface
 {
     public interface IObject : IGetBox<IObject>, IEquals<IObject>
     {
-        int ImageId { get; set; }
+        int Id { get; set; }
         Vector2 Pos { get; set; }
         Vector2 Anchor { get; }
         float Angle { get; set; }
@@ -41,7 +41,7 @@ namespace TankMonogame.Shared.Interface
 
         new public static bool Equals(IObject x, IObject y)
         {
-            return x.ImageId.Equals(y.ImageId);
+            return x.Id.Equals(y.Id);
         }
         void Update();
     }

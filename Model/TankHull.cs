@@ -10,7 +10,7 @@ namespace TankMonogame.Model
     public class TankHull : IObject, IGetBox<TankHull>, IEquals<TankHull>
     {
         public static Texture2D Texture { get; set; }
-        public int ImageId { get; set; }
+        public int Id { get; set; }
         public Vector2 Pos { get; set; }
         public float Speed { get; set; }
         public float MAcceleration { get; set; }
