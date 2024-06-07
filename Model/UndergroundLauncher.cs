@@ -22,6 +22,14 @@ namespace TankMonogame.Model
         public Vector2 Pos { get; set; }
 
         public State CurState = State.ThreeRockets;
+
+        public Dictionary<State, Vector2> StartingPoints = new Dictionary<State, Vector2>() 
+        {
+            {State.ThreeRockets, new Vector2(0, 0)},
+            {State.TwoRockets, new Vector2(17, 11)},
+            {State.OneRocket, new Vector2(-17, 11)}
+        };
+
         public enum State
         {
             ThreeRockets,

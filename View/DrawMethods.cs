@@ -52,5 +52,33 @@ namespace TankMonogame.View
                 spriteBatch.Draw(textures[burrel.ImageId], burrel.LTPoint.ToVector2(), Color.White);
             }
         }
+
+        public static void Draw(this SpriteBatch spriteBatch, UndergroundLauncher undergroundLauncher, Dictionary<int, Texture2D> textures)
+        {
+            Rectangle sourceRectangle = new Rectangle(59 * undergroundLauncher.AnimationFrame, 0, 59, 78);
+            spriteBatch.Draw(textures[undergroundLauncher.ImageId], undergroundLauncher.Pos, sourceRectangle, Color.White, undergroundLauncher.Angle, undergroundLauncher.Anchor, 1.0f, SpriteEffects.None, 1);
+        }
+
+        public static void Draw(this SpriteBatch spriteBatch, List<Point> burnPoint, Dictionary<int, Texture2D> textures)
+        {
+            foreach (var p in burnPoint)
+            {
+                for (int x = -1; x < 2; x++)
+                {
+                    for (int y = -1; y < 2; y++)
+                    {
+                        spriteBatch.Draw(textures[7], (p + new Point(x * 64, y * 64)).ToVector2(), Color.White);
+                    }
+                }
+            }
+        }
+
+        public static void Draw(this SpriteBatch spriteBatch, List<Rocket> rockets, Dictionary<int, Texture2D> textures)
+        {
+            foreach (var rocket in rockets)
+            {
+                spriteBatch.Draw(textures[rocket.ImageId], rocket.Pos, null, Color.White, rocket.Angle + 1.570796f, rocket.Anchor, 1f, SpriteEffects.None, 0f);
+            }
+        }
     }
 }

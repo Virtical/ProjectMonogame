@@ -6,6 +6,7 @@ using TankMonogame.Shared.Enums;
 using TankMonogame.Model.QuadTreeAlgorithm;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using TankMonogame.Model.AStarAlgorithm;
 
 namespace TankMonogame.Model
 {
@@ -19,7 +20,8 @@ namespace TankMonogame.Model
         private UndergroundLauncher undergroundLauncher;
         private List<Bullet> bullets;
         private List<Explosion> explosions;
-        private Queue<Point> burnPoint;
+        private List<Point> burnPoint;
+        private List<Rocket> rockets = new List<Rocket>();
         private double timeLastTankShoot = 0;
         private double timeLastUndergroundLauncherShoot = 0;
 
@@ -80,7 +82,7 @@ namespace TankMonogame.Model
 
             bullets = new List<Bullet>();
             explosions = new List<Explosion>();
-            burnPoint = new Queue<Point>();
+            burnPoint = new List<Point>();
         }
   
         public void Update()
@@ -93,6 +95,16 @@ namespace TankMonogame.Model
                 bullet.Update();
             }
 
+            for (var i = 0; i < rockets.Count; i++)
+            {
+                rockets[i].Update();
+                if (rockets[i].IsDestroyed == true)
+                {
+                    rockets.RemoveAt(i);
+                    burnPoint.RemoveAt(i);
+                }
+            }
+
             Updated.Invoke(this, new GameplayEventArgs
             {
                 TankHull = tankHull,
@@ -101,16 +113,38 @@ namespace TankMonogame.Model
                 Bullets = bullets,
                 Explosions = explosions,
                 UndergroundLauncher = undergroundLauncher,
-                BurnPoint = burnPoint
+                BurnPoint = burnPoint,
+                Rockets = rockets
             });                  
         }
         public void UndergroundLauncherShot(GameTime gameTime)
         {
             if (IsPossibleUndergroundLauncherShoot)
             {
-                if ((gameTime.TotalGameTime.TotalSeconds - timeLastUndergroundLauncherShoot) > 3)
+                if ((gameTime.TotalGameTime.TotalSeconds - timeLastUndergroundLauncherShoot) > 0.5)
                 {
-                    burnPoint.Enqueue(map.GetRandomCleanPlace());
+                    var newTarget = map.GetRandomCleanPlace();
+                    burnPoint.Add(newTarget);
+
+                    var newRocket = new Rocket
+                    {
+                        Pos = undergroundLauncher.Pos + undergroundLauncher.StartingPoints[undergroundLauncher.CurState],
+                        ImageId = 8,
+                        Speed = 5,
+                        Angle = 1.570796f,
+                        MaxSpeed = 5,
+                        Anchor = new Vector2(8, 60),
+                        LeftTop = new Vector2(-8, -60),
+                        RightBottom = new Vector2(9, 0)
+                    };
+
+                    var nodeA = new AStar.Node(newRocket.Pos, newRocket.Angle);
+                    var nodeE = new AStar.Node(newTarget.ToVector2() + new Vector2(32, 32), 0);
+                    var targetRoute = AStar.FindShortestPath(new AStar.Node(newRocket.Pos, newRocket.Angle), nodeE, AStar.Node.GetHeuristic);
+                    newRocket.TargetRoute = targetRoute;
+
+                    rockets.Add(newRocket);
+
                     timeLastUndergroundLauncherShoot = gameTime.TotalGameTime.TotalSeconds;
                     undergroundLauncher.NextState();
                 }

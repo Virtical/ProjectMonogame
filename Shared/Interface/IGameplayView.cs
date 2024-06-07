@@ -20,7 +20,7 @@ namespace TankMonogame.Shared.Interface
         event EventHandler<GameTime> UndergroundLauncherShot;
         event EventHandler<EventArgs> StopUndergroundLauncherShot;
 
-        void LoadGameCycleParameters(Map map, TankHull tankHull, Turret barrelAndTower, List<Bullet> bullets, List<Explosion> explosions, UndergroundLauncher undergroundLauncher, Queue<Point> burnPoint);
+        void LoadGameCycleParameters(Map map, TankHull tankHull, Turret barrelAndTower, List<Bullet> bullets, List<Explosion> explosions, UndergroundLauncher undergroundLauncher, List<Point> burnPoint, List<Rocket> rockets);
         void Run();
     }
 

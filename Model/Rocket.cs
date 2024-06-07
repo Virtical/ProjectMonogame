@@ -1,12 +1,40 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TankMonogame.Model.AStarAlgorithm;
+using TankMonogame.Shared.Interface;
 
 namespace TankMonogame.Model
 {
-    public class Rocket
+    public class Rocket : IObject
     {
+        public int ImageId { get; set; }
+        public Vector2 Pos { get; set; }
+        public Vector2 Anchor { get; set; }
+        public float Angle { get; set; }
+        public float Speed { get; set; }
+        public int MaxSpeed { get; set; }
+        public Vector2 LeftTop { get; set; }
+        public Vector2 RightBottom { get; set; }
+        public List<AStar.Node> TargetRoute { get; set; }
+
+        private int state = 0;
+
+        public bool IsDestroyed = false;
+
+
+        public void Update()
+        {
+            if (state < TargetRoute.Count - 1)
+            {
+                Pos = TargetRoute[state].Position;
+                Angle = TargetRoute[state].Angle;
+                state++;
+            }
+            else
+            {
+                IsDestroyed = true;
+            }
+        }
     }
 }

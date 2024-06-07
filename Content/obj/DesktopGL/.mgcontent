@@ -17,10 +17,12 @@
     <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel7.png</File>
     <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/FloorLevel8.png</File>
     <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/Lava.png</File>
+    <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/Rocket.png</File>
     <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/Tank.png</File>
     <File>C:/Users/Virtical/Desktop/C#/TankMonogame/Content/UndergroundLauncher.png</File>
   </SourceFiles>
   <DestFiles>
+    <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />
     <File xsi:nil="true" />

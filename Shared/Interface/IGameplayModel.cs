@@ -34,6 +34,7 @@ namespace TankMonogame.Shared.Interface
         public Map Map { get; set; }
         public List<Bullet> Bullets { get; set; }
         public List<Explosion> Explosions {get;set;}
-        public Queue<Point> BurnPoint {  get; set; }
+        public List<Point> BurnPoint {  get; set; }
+        public List<Rocket> Rockets { get; set; }
     }
 }
